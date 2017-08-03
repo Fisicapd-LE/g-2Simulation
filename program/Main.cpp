@@ -91,10 +91,10 @@ int main(int argc, char** argv)
     }
     /*ABSORBING: per studiare se l'evento viene o meno assorbito dall'assorbitore*/
     Position3D where_absorbed = Absorbing_ornot(abs0, *event);
-    if(isnan( (where_absorbed.x) ) ) continue;	//se non assorbito non è di interesse per quest'analisi
+    if(std::isnan( double(where_absorbed.x) ) ) continue;	//se non assorbito non è di interesse per quest'analisi
     absorbed++;
     
-    double abs_newupperheight = abs0->GetZlen() - (where_absorbed->z - abs0->GetZposition());	//quanto assorbitore rimane sopra l'evento
+    double abs_newupperheight = abs0->GetZlen() - (where_absorbed.z - abs0->GetZposition());	//quanto assorbitore rimane sopra l'evento
     double abs_newlowerheight = abs0->GetZlen() - abs_newupperheight;
     
 //     Absorber *fakeabsUP = new Absorber();

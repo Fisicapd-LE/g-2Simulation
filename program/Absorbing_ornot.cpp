@@ -59,7 +59,7 @@ Position3D Absorbing_ornot(const Absorber * abs0, const Cosmic & ray)
 		       + abs_lenght * sin(theta) * sin(phi);		//seconda parte data dal progredire all'interno dell'assorbitore  
 		      
   interaction_point.z = entering_point.z					//prima parte data dal punto Z d'interazione nell'assorbitore
-		       + abs_lenght * cos(theta);				//seconda parte data dal progredire all'interno dell'assorbitore
+		       - abs_lenght * cos(theta);				//seconda parte data dal progredire all'interno dell'assorbitore
 
 
   return interaction_point;
