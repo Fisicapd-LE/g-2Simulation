@@ -145,14 +145,14 @@ double Active_Object::SpaceTravelled (const Cosmic & ray, Position3D * start = n
   {
     if(theta < M_PI/2) //track looks down
     {
-      x1 = start.x;
-      y1 =start.y;
-      z1 = start.z;
+      x1 = start->x;
+      y1 =start->y;
+      z1 = start->z;
     } else if(theta > M_PI/2) //track looks up
     {
-      x2 = start.x;
-      y2 =start.y;
-      z2 = start.z;
+      x2 = start->x;
+      y2 =start->y;
+      z2 = start->z;
     } else return 0; //not completely true, but we are not interested in tracks moving horizontally
   }
   

@@ -14,7 +14,7 @@
 #include "Cosmic.h"
 #include "Scintillator.h"
 #include "Absorber.h"
-#include "Position3D.cpp"
+#include "Position3D.h"
 
 
 using namespace std;

@@ -39,9 +39,9 @@ Position3D * Absorbing_ornot(const Absorber * abs0, const Cosmic & ray)
   Position3D entering_point;
   
   
-  entering_point.x = abs0->GetEnteringPoint()->x;	//prima di poterlo fare devo aver calcolato lo SpaceTravelled(ray)
-  entering_point.y = abs0->GetEnteringPoint()->y;
-  entering_point.z = abs0->GetEnteringPoint()->z;
+  entering_point.x = abs0->GetEnteringPoint().x;	//prima di poterlo fare devo aver calcolato lo SpaceTravelled(ray)
+  entering_point.y = abs0->GetEnteringPoint().y;
+  entering_point.z = abs0->GetEnteringPoint().z;
   
   double x0,y0,phi,theta;
   x0 = ray.pos.x;
