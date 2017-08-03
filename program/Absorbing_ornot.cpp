@@ -6,7 +6,7 @@
  */
 
 #include "Cosmic.h"
-#include "Position3D.cpp"
+#include "Position3D.h"
 #include "Absorber.h"
 
 Position3D * Absorbing_ornot(const Absorber * abs0, const Cosmic & ray)

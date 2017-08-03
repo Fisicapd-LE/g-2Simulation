@@ -13,7 +13,7 @@
 
 #include "Cosmic.h"
 
-#include "Position3D.cpp"
+#include "Position3D.h"
 
 
 class Active_Object
