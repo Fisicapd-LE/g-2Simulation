@@ -1,0 +1,8 @@
+#!/bin/bash
+
+g++ *.cpp Args/*.cpp -std=c++11 -03 -o Cosmic
+
+oppure
+
+g++ -std=c++11 -03 -o Simulation Main.cpp Cosmic.cpp Discriminator.cpp Displacement.cpp Args/AnalysysInfo.cpp
+./Simulation
