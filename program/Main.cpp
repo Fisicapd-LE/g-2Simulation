@@ -10,6 +10,7 @@
 #include <iostream>
 //#include <fstream>
 #include <vector>
+#include <cmath>
 
 #include "Cosmic.h"
 #include "Scintillator.h"
@@ -20,8 +21,6 @@
 using namespace std;
 
 short Configuration(const vector<double> & total_charge);
-vector<double> GetSystemCharge(const vector<Scintillator> scint_vec, const Cosmic & ray);
-Position3D * Absorbing_ornot(const Absorber * abs0, const Cosmic & ray);
 
 int main(int argc, char** argv)
 {
@@ -91,8 +90,8 @@ int main(int argc, char** argv)
          break;
     }
     /*ABSORBING: per studiare se l'evento viene o meno assorbito dall'assorbitore*/
-    Position3D * where_absorbed = Absorbing_ornot(abs0, *event);
-    if(where_absorbed == nullptr) continue;	//se non assorbito non è di interesse per quest'analisi
+    Position3D where_absorbed = Absorbing_ornot(abs0, *event);
+    if(isnan( (where_absorbed.x) ) ) continue;	//se non assorbito non è di interesse per quest'analisi
     absorbed++;
     
     double abs_newupperheight = abs0->GetZlen() - (where_absorbed->z - abs0->GetZposition());	//quanto assorbitore rimane sopra l'evento

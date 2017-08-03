@@ -11,6 +11,7 @@
 #include "Active_Object.h"
 #include <string>
 
+
 class Absorber: public Active_Object
 {
 public:
@@ -35,6 +36,8 @@ private:
   
   
 };
+
+Position3D Absorbing_ornot(const Absorber * abs0, const Cosmic & ray);
 
 #endif /* ABSORBER_H_ */
 

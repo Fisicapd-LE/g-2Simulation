@@ -37,7 +37,7 @@ void Active_Object::SetZposition(double z)
 } 
 
 
-double Active_Object::SpaceTravelled (const Cosmic & ray, Position3D * start = nullptr) const
+double Active_Object::SpaceTravelled (const Cosmic & ray, Position3D * start) const
 {
   double x0,y0,phi,theta;
   x0 = ray.pos.x;

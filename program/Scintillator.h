@@ -10,6 +10,11 @@
 
 #include "Active_Object.h"
 #include "Cosmic.h"
+#include <vector>
+
+using namespace std;
+
+
 
 class Scintillator: public Active_Object
 {
@@ -37,6 +42,8 @@ private:
   double width;
   
 };
+
+vector<double> GetSystemCharge(const vector<Scintillator> scint_vec, const Cosmic & ray);
 
 #endif /* SCINTILLATOR_H_ */
 

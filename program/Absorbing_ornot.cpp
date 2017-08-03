@@ -9,7 +9,9 @@
 #include "Position3D.h"
 #include "Absorber.h"
 
-Position3D * Absorbing_ornot(const Absorber * abs0, const Cosmic & ray)
+#include <limits>
+
+Position3D Absorbing_ornot(const Absorber * abs0, const Cosmic & ray)
 {
   double abs_lenght;
   double space_travelled;
@@ -27,15 +29,15 @@ Position3D * Absorbing_ornot(const Absorber * abs0, const Cosmic & ray)
   space_travelled =  (abs0)->SpaceTravelled(ray);
   if(abs_lenght < space_travelled) abs_number = 1;
   
+  Position3D interaction_point ={std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
   
   if(abs_number == 0)
   {
-    return nullptr;
+    return interaction_point;
   }
   
 //   Absorber * absorbed = abs_vec.at(abs_number);
 
-  Position3D * interaction_point = new Position3D;
   Position3D entering_point;
   
   
@@ -50,13 +52,13 @@ Position3D * Absorbing_ornot(const Absorber * abs0, const Cosmic & ray)
   theta = ray.dir.theta;
   
   
-  interaction_point->x = entering_point.x					//prima parte data dal punto X d'interazione nell'assorbitore
+  interaction_point.x = entering_point.x					//prima parte data dal punto X d'interazione nell'assorbitore
 		       + abs_lenght * sin(theta) * cos(phi);		//seconda parte data dal progredire all'interno dell'assorbitore
 		      
-  interaction_point->y = entering_point.y					//prima parte data dal punto Y d'interazione nell'assorbitore
+  interaction_point.y = entering_point.y					//prima parte data dal punto Y d'interazione nell'assorbitore
 		       + abs_lenght * sin(theta) * sin(phi);		//seconda parte data dal progredire all'interno dell'assorbitore  
 		      
-  interaction_point->z = entering_point.z					//prima parte data dal punto Z d'interazione nell'assorbitore
+  interaction_point.z = entering_point.z					//prima parte data dal punto Z d'interazione nell'assorbitore
 		       + abs_lenght * cos(theta);				//seconda parte data dal progredire all'interno dell'assorbitore
 
 
