@@ -9,7 +9,7 @@
 #include <cmath>
 
 #include "Active_Object.h"
-#include "Cosmic.h"
+#include "Tracks/Track.h"
 
 
 
@@ -37,7 +37,7 @@ void Active_Object::SetZposition(double z)
 } 
 
 
-double Active_Object::SpaceTravelled (const Cosmic & ray, Position3D * start) const
+double Active_Object::SpaceTravelled (const Track & ray, Position3D * start) const
 {
   double x0,y0,phi,theta;
   x0 = ray.pos.x;

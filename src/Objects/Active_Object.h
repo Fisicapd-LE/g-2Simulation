@@ -11,10 +11,12 @@
 #ifndef ACTIVE_OBJECT_H_
 #define ACTIVE_OBJECT_H_
 
-#include "Cosmic.h"
+#include <random>
 
-#include "Position3D.h"
+#include "Utilities/Position3D.h"
 
+
+class Track;
 
 class Active_Object
 {
@@ -43,10 +45,7 @@ public:
   
   void SetZposition(double z);
   
-  double SpaceTravelled (const Cosmic & ray, Position3D * start = nullptr) const;	//function to compute the space cosmic ray travels inside 
-											//the active object before going out
-											//IT DOES NOT CONSIDERATE INTERACTION WITH MATTER
-											//TODO LA PREFERIVO PROTECTED, CAMBIERO' L'ABSORBER.CPP PER FARLA TORNARE GIU'
+  
 protected:
   
   double zposition;
@@ -63,6 +62,10 @@ protected:
   
   mutable Position3D entering_point;
   mutable Position3D exit_point;
+  
+  double SpaceTravelled (const Track & ray, Position3D * start = nullptr) const;	//function to compute the space cosmic ray travels inside 
+											//the active object before going out
+											//IT DOES NOT CONSIDERATE INTERACTION WITH MATTER
   
   
   //copied from Enrico's Cosmic.h

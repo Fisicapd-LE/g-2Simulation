@@ -12,10 +12,10 @@
 #include <vector>
 #include <cmath>
 
-#include "Cosmic.h"
-#include "Scintillator.h"
-#include "Absorber.h"
-#include "Position3D.h"
+#include "Utilities/Position3D.h"
+#include "Tracks/Track.h"
+#include "Objects/Scintillator.h"
+#include "Objects/Absorber.h"
 
 
 using namespace std;
@@ -60,14 +60,14 @@ int main(int argc, char** argv)
     nEvent = stol(info->value("-n"));	// leggi il parametro e usalo
   }
   
-  unique_ptr<Cosmic> event;
+  unique_ptr<Track> event;
 //   vector<Charge> Ionization;
 //   vector<double> UpEvent;
 //   vector<double> DownEvent;
 
   for (long sim = 0; sim < nEvent; sim++)	//loop sulla generazione di eventi
   {
-    event = Cosmic::generate();			//generazione evento
+    event = Track::generate();			//generazione evento
 
 
     /*
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
          break;
     }
     /*ABSORBING: per studiare se l'evento viene o meno assorbito dall'assorbitore*/
-    Position3D where_absorbed = Absorbing_ornot(abs0, *event);
+    Position3D where_absorbed = abs0->Absorbing_ornot(*event);
     if(std::isnan( double(where_absorbed.x) ) ) continue;	//se non assorbito non è di interesse per quest'analisi
     absorbed++;
     

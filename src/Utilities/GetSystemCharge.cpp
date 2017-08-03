@@ -10,14 +10,14 @@
 
 #include <vector>
 
-#include "Cosmic.h"
-#include "Scintillator.h"
+#include "Tracks/Track.h"
+#include "Objects/Scintillator.h"
 
 using namespace std;
 
-// double GetSingleCharge(const Scintillator & scint1, const Cosmic & ray);
+// double GetSingleCharge(const Scintillator & scint1, const Track & ray);
 
-vector<double> GetSystemCharge(const vector<Scintillator> scint_vec, const Cosmic & ray)
+vector<double> GetSystemCharge(const vector<Scintillator> scint_vec, const Track & ray)
 {
   vector<double> output;
   for(unsigned int i = 0; i < scint_vec.size(); i++) 

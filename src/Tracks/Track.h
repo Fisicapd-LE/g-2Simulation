@@ -1,20 +1,20 @@
 /*
- * Cosmic.h
+ * Track.h
  *
  *  Created on: 21/lug/2016
  *      Author: enrico
  */
 
-#ifndef COSMIC_H_
-#define COSMIC_H_
+#ifndef TRACK_H_
+#define TRACK_H_
 
 #include <memory>
 #include <random>
 
-class Cosmic
+class Track
 {
 	public:
-		virtual ~Cosmic();
+		virtual ~Track();
 
 		struct Position
 		{
@@ -31,10 +31,10 @@ class Cosmic
 		Position pos;
 		Direction dir;
 
-		static std::unique_ptr<Cosmic> generate();
+		static std::unique_ptr<Track> generate();
 
 	private:
-		Cosmic(Position p, Direction d);
+		Track(Position p, Direction d);
 
 		static Position generatePos();
 		static Direction generateDir();
@@ -51,6 +51,6 @@ class Cosmic
 		};
 };
 
-#endif /* COSMIC_H_ */
+#endif /* Track_H_ */
 
 

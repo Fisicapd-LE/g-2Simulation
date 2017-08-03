@@ -11,7 +11,6 @@
 
 
 #include "Scintillator.h"
-#include "Cosmic.h"
 
 using namespace std;
 
@@ -33,7 +32,7 @@ void Scintillator::SetConv_ratio(double ratio)
 }
 
 
-double Scintillator::GetSingleCharge(const Cosmic & ray) const
+double Scintillator::GetSingleCharge(const Track & ray) const
 {
   
   double ratio = conv_ratio;

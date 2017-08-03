@@ -25,8 +25,9 @@ public:
   //to read absorber data use the Active_Object format
   double GetProb() const 			{return prob;};
   
-  double GetAbsorptionLenght(const Cosmic & ray) const;
+  double GetAbsorptionLenght(const Track & ray) const;
   void SetProb(double prob);
+  Position3D Absorbing_ornot(const Track & ray) const;
   
 private:
   
@@ -36,8 +37,6 @@ private:
   
   
 };
-
-Position3D Absorbing_ornot(const Absorber * abs0, const Cosmic & ray);
 
 #endif /* ABSORBER_H_ */
 

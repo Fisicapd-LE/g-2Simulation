@@ -9,7 +9,7 @@
 #define SCINTILLATOR_H_
 
 #include "Active_Object.h"
-#include "Cosmic.h"
+#include "Tracks/Track.h"
 #include <vector>
 
 using namespace std;
@@ -33,7 +33,7 @@ public:
   
   void SetConv_ratio(double ratio);
   
-  double GetSingleCharge(const Cosmic & ray) const;
+  double GetSingleCharge(const Track & ray) const;
   
 private:
   
@@ -43,7 +43,7 @@ private:
   
 };
 
-vector<double> GetSystemCharge(const vector<Scintillator> scint_vec, const Cosmic & ray);
+vector<double> GetSystemCharge(const vector<Scintillator> scint_vec, const Track & ray);
 
 #endif /* SCINTILLATOR_H_ */
 

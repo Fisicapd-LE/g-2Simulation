@@ -1,33 +1,33 @@
 /*
- * Cosmic.cpp
+ * Track.cpp
  *
  *  Created on: 21/lug/2016
  *      Author: enrico
  */
 
-#include "Cosmic.h"
+#include "Track.h"
 
 using namespace std;
 
-Cosmic::Cosmic(Position p, Direction d)
+Track::Track(Position p, Direction d)
 	:pos(p), dir(d)
 {
 
 }
 
-Cosmic::~Cosmic()
+Track::~Track()
 {
 
 }
 
-std::unique_ptr<Cosmic> Cosmic::generate()
+std::unique_ptr<Track> Track::generate()
 {
 	Position p = generatePos();
 	Direction d = generateDir();
-	return unique_ptr<Cosmic>(new Cosmic(p, d));
+	return unique_ptr<Track>(new Track(p, d));
 }
 
-Cosmic::Position Cosmic::generatePos()
+Track::Position Track::generatePos()
 {
 	std::uniform_real_distribution<double> disx(-350, 350);	// genera la posizione x in mm sul rilevatore più esterno
 	std::uniform_real_distribution<double> disy(-175, 175); // genera la posizione y in mm sul rilevatore più esterno
@@ -39,7 +39,7 @@ Cosmic::Position Cosmic::generatePos()
 	return pos;
 }
 
-Cosmic::Direction Cosmic::generateDir()
+Track::Direction Track::generateDir()
 {
 	std::uniform_real_distribution<double> dis(0, 2*M_PI);	// genera phi, uniforme
 
