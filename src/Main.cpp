@@ -12,7 +12,7 @@
 #include <vector>
 #include <cmath>
 
-#include "Utilities/Position3D.h"
+#include "Utilities/Vector3D.h"
 #include "Tracks/Track.h"
 #include "Objects/Scintillator.h"
 #include "Objects/Absorber.h"

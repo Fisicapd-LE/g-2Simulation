@@ -6,7 +6,7 @@
  */
 
 #include "Cosmic.h"
-#include "Position3D.h"
+#include "Vector3D.h"
 #include "Absorber.h"
 
 #include <limits>

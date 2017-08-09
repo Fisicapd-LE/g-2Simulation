@@ -145,14 +145,14 @@ double Active_Object::SpaceTravelled (const Track & ray, Position3D * start) con
   {
     if(theta < M_PI/2) //track looks down
     {
-      x1 = start->x;
-      y1 =start->y;
-      z1 = start->z;
+      min[0] = start->x;
+      min[1] = start->y;
+      min[2] = start->z;
     } else if(theta > M_PI/2) //track looks up
     {
-      x2 = start->x;
-      y2 =start->y;
-      z2 = start->z;
+      max[0] = start->x;
+      max[1] = start->y;
+      max[2] = start->z;
     } else return 0; //not completely true, but we are not interested in tracks moving horizontally
   }
   
