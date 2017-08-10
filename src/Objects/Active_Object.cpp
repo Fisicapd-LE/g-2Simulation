@@ -128,9 +128,9 @@ double Active_Object::SpaceTravelled (const Track & ray, Position3D * start) con
   }
   
   //Filling protected members of the class
-//   Xentering_point = x1;
-//   Yentering_point = y1;
-//   Xentering_point = z1;
+  //   Xentering_point = x1;
+  //   Yentering_point = y1;
+  //   Xentering_point = z1;
 
   entering_point.x = x1;
   entering_point.y = y1;

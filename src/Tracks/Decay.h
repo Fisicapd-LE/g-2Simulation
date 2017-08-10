@@ -26,6 +26,10 @@ class Decay: public Generator
 		std::unique_ptr<Track> decay(std::unique_ptr<Track>&& cosmic, Position3D pos);
 		
 	private:
+		class BGen
+		{
+			B operator()(Position3D p) const;
+		};
 		BGen bg;
 		const double slowDec = 2200.; 	// ns
 		const double fastDec = 1e-3;	// ns

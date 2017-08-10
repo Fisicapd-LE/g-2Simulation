@@ -8,12 +8,13 @@
 #ifndef TRACK_H_
 #define TRACK_H_
 
+#include "Utilities/Generator.h"
+
 #include <memory>
-#include <random>
 
 class Decay;
 
-class Track
+class Track: public Generator
 {
 	friend Decay;
 	public:
@@ -43,12 +44,12 @@ class Track
 			muN,
 			eP,
 			eN
-		}
+		};
 
 		Position pos;
 		Direction dir;
 		Spin s;
-		Flovour f;
+		Flavour f;
 		double time;
 		
 		static std::unique_ptr<Track> generate();
@@ -60,17 +61,6 @@ class Track
 		static Direction generateDir();
 		static Spin generateSpin();
 		static Flavour generateFlavour();
-		
-		static std::random_device& rd()
-		{
-			static std::random_device rd;
-			return rd;
-		};
-		static std::mt19937_64& gen()
-		{
-			static std::mt19937_64 gen(rd()());
-			return gen;
-		};
 		
 		static double polarization()
 		{

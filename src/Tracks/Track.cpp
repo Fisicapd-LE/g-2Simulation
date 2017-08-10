@@ -58,7 +58,7 @@ Track::Direction Track::generateDir()
 	return dir;
 }
 
-Track::Spin Track::generateSpin(){
+Track::Spin Track::generateSpin()
 {
 	std::uniform_real_distribution<double> dis(0, 1);
 	
@@ -72,7 +72,7 @@ Track::Flavour Track::generateFlavour()
 {
 	std::uniform_real_distribution<double> dis(0, 1);
 	
-	if (dis(gen()) < 1/(1+muRatio())
+	if (dis(gen()) < 1/(1+muRatio()))
 		return Flavour::muN;
 		
 	return Flavour::muP;

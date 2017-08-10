@@ -10,7 +10,7 @@ DIRS = $(sort $(dir $(wildcard src/*/.)))
 SRCS = $(foreach DIR,$(DIRS),$(wildcard $(DIR)*.cpp))  src/Main.cpp src/Configuration.cpp
 OBJECTS = $(addsuffix .o,$(basename $(SRCS)))
 
-$(shell 'for i in $(DIRS); do mkdir -p $i >/dev/null')
+$(foreach folder,$(subst src,.d,$(DIRS)), $(shell mkdir -p $(folder) > /dev/null))
 
 src/Simulation: $(DIRS) src/Main.o src/Configuration.o
 	g++ $(CFLAGS) -o Simulation $(OBJECTS)

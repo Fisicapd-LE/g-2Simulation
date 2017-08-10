@@ -4,8 +4,8 @@ using namespace std;
 
 unique_ptr<Track> Decay::decay(unique_ptr<Track>&& cosmic, Position3D pos)
 {
-	std::exponential_distribution slow(1./slowDec);
-	std::exponential_distribution fast(1./fastDec);
+	std::exponential_distribution<double> slow(1./slowDec);
+	std::exponential_distribution<double> fast(1./fastDec);
 	
 	double t = slow(gen());
 	if (cosmic->f == Track::Flavour::muN)
@@ -15,5 +15,5 @@ unique_ptr<Track> Decay::decay(unique_ptr<Track>&& cosmic, Position3D pos)
 			t = tf;
 	}
 	
-	B b = bg(pos);
+	return move(cosmic);
 }
