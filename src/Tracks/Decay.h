@@ -28,7 +28,8 @@ class Decay: public Generator
 	private:
 		class BGen
 		{
-			B operator()(Position3D p) const;
+			public:
+				B operator()(Position3D p) const;
 		};
 		BGen bg;
 		const double slowDec = 2200.; 	// ns

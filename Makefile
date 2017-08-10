@@ -12,7 +12,7 @@ OBJECTS = $(addsuffix .o,$(basename $(SRCS)))
 
 $(foreach folder,$(subst src,.d,$(DIRS)), $(shell mkdir -p $(folder) > /dev/null))
 
-src/Simulation: $(DIRS) src/Main.o src/Configuration.o
+src/Simulation: $(OBJECTS)
 	g++ $(CFLAGS) -o Simulation $(OBJECTS)
 	
 .PHONY: $(DIRS) clean
@@ -23,8 +23,6 @@ clean:
 	rm -f $(DEPDIR)/**/*.d
 
 .SECONDEXPANSION:
-
-$(DIRS): src/%: $$(addsuffix .o,$$(basename $$(wildcard src/%*.cpp)))
 
 $(OBJECTS): src/%.o: src/%.cpp $(DEPDIR)/%.d
 	g++ -c $(CFLAGS) $(DEPFLAGS) -I $(INCLUDE) -o $@ $<

@@ -9,6 +9,7 @@
 #define TRACK_H_
 
 #include "Utilities/Generator.h"
+#include "Utilities/Vector3D.h"
 
 #include <memory>
 
@@ -19,12 +20,6 @@ class Track: public Generator
 	friend Decay;
 	public:
 		virtual ~Track();
-
-		struct Position
-		{
-			double x;
-			double y;
-		};
 
 		struct Direction
 		{
@@ -46,18 +41,30 @@ class Track: public Generator
 			eN
 		};
 
-		Position pos;
+		Position3D pos;
 		Direction dir;
 		Spin s;
 		Flavour f;
 		double time;
 		
 		static std::unique_ptr<Track> generate();
+		
+		Position3D getPosition(double s) const
+		{
+			return Position3D{
+				pos.x + s*sin(dir.theta)*cos(dir.phi),
+				pos.y + s*sin(dir.theta)*sin(dir.phi),
+				pos.z - s*cos(dir.theta)
+			};
+		};
+		
+		void addIntersectionPoint(int objectID, std::pair<double, double> points) const;
+		std::pair<double, double> getIntersectionPoint(int objectID) const;
 
 	private:
-		Track(Position p, Direction d, Spin s, Flavour f, double t);
+		Track(Position3D p, Direction d, Spin s, Flavour f, double t = 0);
 
-		static Position generatePos();
+		static Position3D generatePos();
 		static Direction generateDir();
 		static Spin generateSpin();
 		static Flavour generateFlavour();
@@ -71,6 +78,8 @@ class Track: public Generator
 		{
 			return 1.25;
 		}
+		
+		mutable std::array<std::pair<double, double>, 20> intersectionPoints;
 };
 
 #endif /* Track_H_ */

@@ -14,6 +14,7 @@
 #include "Utilities/Vector3D.h"
 #include "Utilities/Generator.h"
 
+#include <limits>
 
 class Track;
 
@@ -36,11 +37,12 @@ public:
   double GetYdisplace() const 		{return ydisplace;};
 //   double GetZdisplace() const 		{return zdisplace;};
 
-  Position3D GetEnteringPoint() const	{return entering_point;};
+  //Position3D GetEnteringPoint() const	{return entering_point;};
   //Position3D GetExitPoint() const	{return exit_point;};
   
   void SetZposition(double z);
   
+  std::pair<double, double> intersectionPoints(const Track& t, double zmax = std::numeric_limits<double>::quiet_NaN()) const;
   
 protected:
   
@@ -51,15 +53,16 @@ protected:
   double xdisplace;
   double ydisplace;
 //   double zdisplace;
+
+  double SpaceTravelled (const Track & ray, double zmax = std::numeric_limits<double>::quiet_NaN()) const;	// function to compute the space cosmic ray travels inside 
+																	// the active object before going out
+																	// interaction with matter has to be exposed by setting the zmax
+																	
+  static int nObjects;
+  int ID;
   
-  mutable Position3D entering_point;
-  mutable Position3D exit_point;
-  
-  double SpaceTravelled (const Track & ray, Position3D * start = nullptr) const;	// function to compute the space cosmic ray travels inside 
-																					// the active object before going out
-																					// IT DOES NOT CONSIDERATE INTERACTION WITH MATTER
-  
-  
+
+
 };
 
 #endif /* ACTIVE_OBJECT_H_ */ 

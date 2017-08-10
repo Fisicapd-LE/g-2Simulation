@@ -7,11 +7,15 @@
 
 #include "Track.h"
 
+#include <limits>
+
 using namespace std;
 
-Track::Track(Position p, Direction d, Spin s, Flavour f, double t = 0)
+Track::Track(Position3D p, Direction d, Spin s, Flavour f, double t)
 	:pos(p), dir(d), s(s), f(f), time(t)
 {
+	for(auto& points: intersectionPoints)
+		points = {numeric_limits<double>::quiet_NaN(),numeric_limits<double>::quiet_NaN()};
 }
 
 Track::~Track()
@@ -20,21 +24,22 @@ Track::~Track()
 
 std::unique_ptr<Track> Track::generate()
 {
-	Position p = generatePos();
+	Position3D p = generatePos();
 	Direction d = generateDir();
 	Spin s = generateSpin();
 	Flavour f = generateFlavour();
 	return unique_ptr<Track>(new Track(p, d, s, f));
 }
 
-Track::Position Track::generatePos()
+Position3D Track::generatePos()
 {
 	std::uniform_real_distribution<double> disx(-350, 350);	// genera la posizione x in mm sul rilevatore più esterno
 	std::uniform_real_distribution<double> disy(-175, 175); // genera la posizione y in mm sul rilevatore più esterno
 
-	Position pos;
+	Position3D pos;
 	pos.x = disx(gen());
 	pos.y = disy(gen());
+	pos.z = 0;
 
 	return pos;
 }
@@ -78,3 +83,12 @@ Track::Flavour Track::generateFlavour()
 	return Flavour::muP;
 }
 
+void Track::addIntersectionPoint(int objectID, std::pair<double, double> points) const
+{
+	intersectionPoints.at(objectID) = points;
+}
+
+std::pair<double, double> Track::getIntersectionPoint(int objectID) const
+{
+	return intersectionPoints.at(objectID);
+}
