@@ -36,9 +36,6 @@ public:
   double GetXdisplace() const 		{return xdisplace;};
   double GetYdisplace() const 		{return ydisplace;};
 //   double GetZdisplace() const 		{return zdisplace;};
-
-  //Position3D GetEnteringPoint() const	{return entering_point;};
-  //Position3D GetExitPoint() const	{return exit_point;};
   
   void SetZposition(double z);
   
