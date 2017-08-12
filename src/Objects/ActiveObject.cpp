@@ -1,5 +1,5 @@
 /*
- * Active_Object.cpp
+ * ActiveObject.cpp
  *
  *  Created on: 01/ago/2017
  *      Author: Davide
@@ -8,12 +8,12 @@
 #include <cmath>
 #include <algorithm>
 
-#include "Active_Object.h"
+#include "ActiveObject.h"
 #include "Tracks/Track.h"
 
-int Active_Object::nObjects = 0;
+int ActiveObject::nObjects = 0;
 
-Active_Object::Active_Object(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen):
+ActiveObject::ActiveObject(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen):
 zposition (zheight),
 xdisplace(xdisplace),
 ydisplace(ydisplace),
@@ -25,18 +25,18 @@ ID(nObjects)
 	nObjects++; 
 }
 
-Active_Object::~Active_Object()
+ActiveObject::~ActiveObject()
 {
 }
 
-void Active_Object::SetZposition(double z)
+void ActiveObject::SetZposition(double z)
 {
   zposition = z;
   return;
 } 
 
 
-std::pair<double, double> Active_Object::intersectionPoints(const Track & ray, double zmax) const
+std::pair<double, double> ActiveObject::intersectionPoints(const Track & ray, double zmax) const
 {
   auto points = ray.getIntersectionPoint(ID);
   if (std::isnan(points.first))
@@ -125,7 +125,7 @@ std::pair<double, double> Active_Object::intersectionPoints(const Track & ray, d
 }
 
 
-double Active_Object::SpaceTravelled (const Track & ray, double zmax) const
+double ActiveObject::SpaceTravelled (const Track & ray, double zmax) const
 {
   auto points = intersectionPoints(ray, zmax);
   double& Max = points.second;

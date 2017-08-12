@@ -15,7 +15,7 @@
 using namespace std;
 
 Scintillator::Scintillator(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen, short int mode, double width):
-  Active_Object(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
+  ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
   mode( mode ),
   width( width )
   {

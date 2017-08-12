@@ -44,7 +44,7 @@ Position3D Track::generatePos()
 	return pos;
 }
 
-Track::Direction Track::generateDir()
+Direction Track::generateDir()
 {
 	std::uniform_real_distribution<double> dis(0, 2*M_PI);	// genera phi, uniforme
 

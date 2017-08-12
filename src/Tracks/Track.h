@@ -20,12 +20,6 @@ class Track: public Generator
 	friend Decay;
 	public:
 		virtual ~Track();
-
-		struct Direction
-		{
-			double phi;
-			double theta;
-		};
 		
 		enum struct Spin: char
 		{

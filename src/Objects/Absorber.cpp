@@ -16,7 +16,7 @@
 #include <limits>
 
 Absorber::Absorber(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen, double prob):
-  Active_Object(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
+  ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
   prob ( prob )
   { }
 

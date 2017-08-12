@@ -24,8 +24,6 @@ short Configuration(const vector<double> & total_charge);
 
 int main(int argc, char** argv)
 {
-  
-  
   unique_ptr<AnalysisInfo> info(new AnalysisInfo(argc, argv));  //argomenti da riga di comando
   
   //crea gli scintillatori e gli assorbitori
@@ -106,39 +104,7 @@ int main(int argc, char** argv)
        << "Triggered: " << accepted << endl
        << "Absorbed : " << absorbed << endl
        << "Absorbed rate : " << absorbed*1.0/accepted << endl;
-//        << "Boh: " << accepted*1.0/nEvent << endl;
-       
-       
-       
-       
-       
-       
-       
-       
-       
-  /*const int NBINS = 1201;
-  int * binsUp = new int[NBINS];
-  int * binsDown = new int[NBINS];
-  for (int i = 0; i < NBINS; i++)	
-  {
-    binsUp[i] = 0;
-    binsDown[i] = 0;
-  }
-  const double binsize = 1.0;
-  for (unsigned int i = 0; i < UpEvent.size(); i++)
-  {
-    int binposUp = int((UpEvent[i]+600)/binsize);
-    int binposDown = int((DownEvent[i]+600)/binsize);
-    binsUp[binposUp]++;
-    binsDown[binposDown]++;
-  }
-  ofstream UpFile("UpHistogram.txt");
-  ofstream DownFile("DownHistogram.txt");
-  for (int i = 0; i < NBINS; i++)
-  {
-    UpFile << binsUp[i] << '\n';
-    DownFile << binsDown[i] << '\n';
-  }*/
+
   return 0;
 }
 

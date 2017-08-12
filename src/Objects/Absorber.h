@@ -8,11 +8,11 @@
 #ifndef ABSORBER_H_
 #define ABSORBER_H_
 
-#include "Active_Object.h"
+#include "ActiveObject.h"
 #include <string>
 
 
-class Absorber: public Active_Object
+class Absorber: public ActiveObject
 {
 public:
 //   Absorber();

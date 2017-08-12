@@ -15,7 +15,16 @@ $(foreach folder,$(subst src,.d,$(DIRS)), $(shell mkdir -p $(folder) > /dev/null
 src/Simulation: $(OBJECTS)
 	g++ $(CFLAGS) -o Simulation $(OBJECTS)
 	
-.PHONY: $(DIRS) clean
+.PHONY: $(DIRS) clean deps
+
+deps:
+	@echo $(SRCS)	
+	@echo
+	@echo $(basename $(SRCS))
+	@echo
+	@echo $(patsubst src/%,$(DEPDIR)/%.d,$(basename $(SRCS)))
+	@echo
+	@echo $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS))))
 
 clean: 
 	rm -f $(OBJECTS)
@@ -31,4 +40,4 @@ $(OBJECTS): src/%.o: src/%.cpp $(DEPDIR)/%.d
 $(DEPDIR)/%.d: ;
 .PRECIOUS: $(DEPDIR)/%.d
 
-include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS))))
+include $(patsubst src/%,$(DEPDIR)/%.d,$(basename $(SRCS)))

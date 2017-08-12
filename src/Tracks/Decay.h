@@ -32,8 +32,13 @@ class Decay: public Generator
 				B operator()(Position3D p) const;
 		};
 		BGen bg;
-		const double slowDec = 2200.; 	// ns
-		const double fastDec = 1e-3;	// ns
+		static constexpr double slowDec = 2200.; 	// ns
+		static constexpr double fastDec = 1e-3;		// ns
+		
+		static Direction generateElecDir();
+		static double generateDecayTime(Track::Flavour f);
+		
+		static constexpr double a = 1./3.;
 };
 
 #endif /* ACTIVE_OBJECT_H_ */ 

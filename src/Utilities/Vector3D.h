@@ -8,10 +8,15 @@ struct Vector3D
   double x;
   double y;
   double z;
-  double mod(){return std::sqrt(x*x+y*y+z*z);};
 };
 
 using Position3D = Vector3D;
 using B = Vector3D;
+
+struct Direction
+{
+	double phi;
+	double theta;
+};
 
 #endif /* POSITION3D */

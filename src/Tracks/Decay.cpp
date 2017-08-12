@@ -2,73 +2,100 @@
 
 using namespace std;
 
-Track::Direction changeAxis(Track::Direction p, Track::Direction a)
+Direction changeAxis(const Direction& point, const Direction& axis)
 {
-    double phi1 = fmod(p.phi + 5 * M_PI_2 - a.phi, 2 * M_PI);
-    double theta1 = p.theta;
+    double phi1 = fmod(point.phi + 5 * M_PI_2 - axis.phi, 2 * M_PI);
+    double theta1 = point.theta;
 
     double ss =
-        sin(phi1) * sin(theta1) * cos(a.theta) - cos(theta1) * sin(a.theta);
+        sin(phi1) * sin(theta1) * cos(axis.theta) - cos(theta1) * sin(axis.theta);
     double c =
-        sin(phi1) * sin(theta1) * sin(a.theta) + cos(theta1) * cos(a.theta);
+        sin(phi1) * sin(theta1) * sin(axis.theta) + cos(theta1) * cos(axis.theta);
     double phi2 = (phi1 < M_PI_2 or phi1 > 3 * M_PI_2) ?
                       asin(ss / sqrt(1 - c * c)) :
                       M_PI - asin(ss / sqrt(1 - c * c));
     double theta2 = acos(c);
 
-    Track::Direction pf;
-    pf.phi = fmod(phi2 + 3 * M_PI_2 + a.phi, 2 * M_PI);
+    Direction pf;
+    pf.phi = fmod(phi2 + 3 * M_PI_2 + axis.phi, 2 * M_PI);
     pf.theta = theta2;
 
     return pf;
 }
 
-Track::Direction reflect(Track::Direction p)
+Direction reflect(const Direction& p)
 {
-    Track::Direction r;
+    Direction r;
     r.theta = p.theta;
     r.phi = fmod(p.phi + M_PI, 2 * M_PI);
 
     return r;
 }
 
-Track::Direction rotate(Track::Direction p, Track::Direction a, double ang)
+Direction rotate(const Direction& point, const Direction& axis, double ang)
 {
-	using Dir = Track::Direction;
 	
-	Dir pNewAx = changeAxis(p, a);
+	Direction pNewAx = changeAxis(point, axis);
 	
-	p.phi += ang;
+	pNewAx.phi += ang;
 	
-	return changeAxis(p, reflect(a));
+	return changeAxis(pNewAx, reflect(axis));
 }
 
 unique_ptr<Track> Decay::decay(unique_ptr<Track>&& cosmic, Position3D pos)
 {
 	double g = 2.;
 	double muB = 1.;
+	double t = generateDecayTime(cosmic->f);
+	
+	B b = bg(pos);
+	
+	Direction normal = {atan2(b.y,b.x), M_PI_2};
+	
+	double rotationAngle = -sqrt(b.x*b.x + b.y*b.y)*g*muB/2;
+	if (cosmic->s == Track::Spin::d)
+		rotationAngle = -rotationAngle;
+	
+	Direction spinDir = rotate(Direction{0, (cosmic->s == Track::Spin::u)?0:M_PI}, normal, rotationAngle);
+	
+	Direction dir = generateElecDir();		// generate electron dir as if spin was on vertical
+	
+	dir = changeAxis(dir, reflect(spinDir));		// adjust it to spin direction
+	
+	auto elec = unique_ptr<Track>(new Track(pos, dir, Track::Spin::u, Track::Flavour(int(cosmic->f)+2), t));
+	
+	return move(elec);
+}
+
+double Decay::generateDecayTime(Track::Flavour f)
+{
 	std::exponential_distribution<double> slow(1./slowDec);
 	std::exponential_distribution<double> fast(1./fastDec);
 	
 	double t = slow(gen());
-	if (cosmic->f == Track::Flavour::muN)
+	if (f == Track::Flavour::muN)
 	{
 		double tf = fast(gen());
 		if (tf < t)
 			t = tf;
 	}
+}
+
+Direction Decay::generateElecDir()
+{
+	std::uniform_real_distribution<double> dis(0, 2*M_PI);	// genera phi, uniforme
+
+	Direction dir;
+	dir.phi = dis(gen());
+	double cosNum;
+	double uniNum;
+	do
+	{
+		cosNum = dis(gen())/2;
+		uniNum = generate_canonical<double, 16>(gen());
+	}while(uniNum > (1 + a*cos(cosNum))/(1 + a));	// genera theta, con algoritmo hit or miss
 	
-	B b = bg(pos);
-	
-	Track::Direction normal = {atan2(b.y,b.x), M_PI_2};
-	
-	double rotationAngle = -b.mod()*g*muB/2;
-	if (cosmic->s == Track::Spin::d)
-		rotationAngle = -rotationAngle;
-	
-	Track::Direction dir = rotate(Track::Direction{0, (cosmic->s == Track::Spin::u)?0:M_PI}, normal, rotationAngle);
-	
-	auto elec = unique_ptr<Track>(new Track(pos, dir, Track::Spin::u, Track::Flavour(int(cosmic->f)+2), t));
-	
-	return move(elec);
+	dir.theta = cosNum;
+
+	return dir;
 }

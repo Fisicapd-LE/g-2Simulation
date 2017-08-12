@@ -8,7 +8,7 @@
 #ifndef SCINTILLATOR_H_
 #define SCINTILLATOR_H_
 
-#include "Active_Object.h"
+#include "ActiveObject.h"
 #include "Tracks/Track.h"
 #include <vector>
 
@@ -16,7 +16,7 @@ using namespace std;
 
 
 
-class Scintillator: public Active_Object
+class Scintillator: public ActiveObject
 {
 public:
 //   Scintillator();

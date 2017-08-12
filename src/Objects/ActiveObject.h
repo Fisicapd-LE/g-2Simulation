@@ -1,5 +1,5 @@
 /*
- * Active_Object.h
+ * ActiveObject.h
  *
  *  Created on: 01/ago/2017
  *      Author: davide
@@ -8,8 +8,8 @@
 //its position and its shape and dimensions. It will describe both scintillators and absorber, who will
 //inherit from this class.
 
-#ifndef ACTIVE_OBJECT_H_
-#define ACTIVE_OBJECT_H_
+#ifndef ActiveObject_H_
+#define ActiveObject_H_
 
 #include "Utilities/Vector3D.h"
 #include "Utilities/Generator.h"
@@ -18,15 +18,15 @@
 
 class Track;
 
-class Active_Object: public Generator
+class ActiveObject: public Generator
 {
 public:
-  //   Active_Object();
-  //   Active_Object(double zheight);
-  //   Active_Object(double zheight, double xdisplace, double ydisplace);
-  Active_Object(double zheight = 0, double xdisplace = 0, double ydisplace = 0, double xlen = 600, double ylen = 250, double zlen = 15);
+  //   ActiveObject();
+  //   ActiveObject(double zheight);
+  //   ActiveObject(double zheight, double xdisplace, double ydisplace);
+  ActiveObject(double zheight = 0, double xdisplace = 0, double ydisplace = 0, double xlen = 600, double ylen = 250, double zlen = 15);
   
-  virtual ~Active_Object();
+  virtual ~ActiveObject();
   
   //to read object data
   double GetZposition() const 		{return zposition;};
@@ -65,4 +65,4 @@ protected:
 
 };
 
-#endif /* ACTIVE_OBJECT_H_ */ 
+#endif /* ActiveObject_H_ */ 
