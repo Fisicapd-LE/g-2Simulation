@@ -14,6 +14,8 @@
 #include "Utilities/Vector3D.h"
 #include "Utilities/Generator.h"
 
+#include "Interaction/Interaction.h"
+
 #include <limits>
 
 class Track;
@@ -39,7 +41,11 @@ public:
   
   void SetZposition(double z);
   
-  std::pair<double, double> intersectionPoints(const Track& t, double zmax = std::numeric_limits<double>::quiet_NaN()) const;
+  Intersections intersectionPoints(const Track& t, const Interaction& inter) const;
+  
+  bool isInside(const Track& t) const;
+  
+  virtual void interact(const Track& t, const Interaction& inter) const = 0;
   
 protected:
   
@@ -51,7 +57,7 @@ protected:
   double ydisplace;
 //   double zdisplace;
 
-  double SpaceTravelled (const Track & ray, double zmax = std::numeric_limits<double>::quiet_NaN()) const;	// function to compute the space cosmic ray travels inside 
+  double SpaceTravelled (const Track & ray) const;	// function to compute the space cosmic ray travels inside 
 																	// the active object before going out
 																	// interaction with matter has to be exposed by setting the zmax
 																	

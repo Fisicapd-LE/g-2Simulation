@@ -4,7 +4,7 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 POSTCOMPILE = @mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 
-CFLAGS = -std=c++11 -O3
+CFLAGS = -std=c++11 -O3 -Wall -Wpedantic -Wextra
 INCLUDE = src
 DIRS = $(sort $(dir $(wildcard src/*/.)))
 SRCS = $(foreach DIR,$(DIRS),$(wildcard $(DIR)*.cpp))  src/Main.cpp src/Configuration.cpp

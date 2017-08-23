@@ -9,7 +9,7 @@
 #ifndef DECAY_H_
 #define DECAY_H_
 
-#include "Track.h"
+#include "Tracks/Track.h"
 
 #include "Utilities/Vector3D.h"
 
@@ -23,7 +23,7 @@ class Decay: public Generator
 		Decay& operator=(Decay&) = delete;
 		virtual ~Decay() {};
 		
-		std::unique_ptr<Track> decay(std::unique_ptr<Track>&& cosmic, Position3D pos);
+		static std::unique_ptr<Track> decay(const Track& cosmic, Position3D pos);
 		
 	private:
 		class BGen
@@ -31,9 +31,14 @@ class Decay: public Generator
 			public:
 				B operator()(Position3D p) const;
 		};
-		BGen bg;
-		static constexpr double slowDec = 2200.; 	// ns
-		static constexpr double fastDec = 1e-3;		// ns
+		static BGen bg()
+		{
+			static BGen bg;
+			return bg;
+		}
+		
+		static constexpr long slowDec = 2200; 	// ns
+		static constexpr long fastDec = 1;		// ns
 		
 		static Direction generateElecDir();
 		static double generateDecayTime(Track::Flavour f);

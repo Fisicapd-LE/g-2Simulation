@@ -25,9 +25,11 @@ public:
   //to read absorber data use the Active_Object format
   double GetProb() const 			{return prob;};
   
-  double GetAbsorptionLenght(const Track & ray) const;
+  double GetAbsorptionLenght() const;
   void SetProb(double prob);
-  Position3D Absorbing_ornot(const Track & ray) const;
+  Option<double> Absorbing_ornot(const Track & ray, const Interaction& inter) const;
+  
+  void interact(const Track& t, const Interaction& inter) const override;
   
 private:
   

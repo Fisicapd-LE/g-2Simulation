@@ -10,6 +10,7 @@
 
 #include "Utilities/Generator.h"
 #include "Utilities/Vector3D.h"
+#include "Utilities/Option.h"
 
 #include <memory>
 
@@ -19,6 +20,7 @@ class Track: public Generator
 {
 	friend Decay;
 	public:
+		using time = long;
 		virtual ~Track();
 		
 		enum struct Spin: char
@@ -39,7 +41,22 @@ class Track: public Generator
 		Direction dir;
 		Spin s;
 		Flavour f;
-		double time;
+		time t;
+		
+		double getStart() const
+		{
+			return start;
+		};
+		double getEnd() const
+		{
+			return end;
+		}
+		
+		void setEnd(double end)
+		{
+			if (end < this->end and end > this->start)
+				this->end = end;
+		};
 		
 		static std::unique_ptr<Track> generate();
 		
@@ -52,11 +69,11 @@ class Track: public Generator
 			};
 		};
 		
-		void addIntersectionPoint(int objectID, std::pair<double, double> points) const;
-		std::pair<double, double> getIntersectionPoint(int objectID) const;
-
 	private:
-		Track(Position3D p, Direction d, Spin s, Flavour f, double t = 0);
+		Track(Position3D p, Direction d, Spin s, Flavour f, double zStart, time t = 0);
+		
+		const double start;
+		double end;
 
 		static Position3D generatePos();
 		static Direction generateDir();
@@ -72,8 +89,6 @@ class Track: public Generator
 		{
 			return 1.25;
 		}
-		
-		mutable std::array<std::pair<double, double>, 20> intersectionPoints;
 };
 
 #endif /* Track_H_ */

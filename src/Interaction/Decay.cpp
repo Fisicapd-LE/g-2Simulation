@@ -42,29 +42,33 @@ Direction rotate(const Direction& point, const Direction& axis, double ang)
 	return changeAxis(pNewAx, reflect(axis));
 }
 
-unique_ptr<Track> Decay::decay(unique_ptr<Track>&& cosmic, Position3D pos)
+unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos)
 {
-	double g = 2.;
-	double muB = 1.;
-	double t = generateDecayTime(cosmic->f);
+	static const double g = 2.;
+	static const double muB = 1.;
 	
-	B b = bg(pos);
+	if(cosmic.f >= Track::Flavour::eP)
+		return unique_ptr<Track>(nullptr);
+	
+	double t = generateDecayTime(cosmic.f);
+	
+	B b = bg()(pos);
 	
 	Direction normal = {atan2(b.y,b.x), M_PI_2};
 	
 	double rotationAngle = -sqrt(b.x*b.x + b.y*b.y)*g*muB/2;
-	if (cosmic->s == Track::Spin::d)
+	if (cosmic.s == Track::Spin::d)
 		rotationAngle = -rotationAngle;
 	
-	Direction spinDir = rotate(Direction{0, (cosmic->s == Track::Spin::u)?0:M_PI}, normal, rotationAngle);
+	Direction spinDir = rotate(Direction{0, (cosmic.s == Track::Spin::u)?0:M_PI}, normal, rotationAngle);
 	
 	Direction dir = generateElecDir();		// generate electron dir as if spin was on vertical
 	
 	dir = changeAxis(dir, reflect(spinDir));		// adjust it to spin direction
 	
-	auto elec = unique_ptr<Track>(new Track(pos, dir, Track::Spin::u, Track::Flavour(int(cosmic->f)+2), t));
+	auto elec = unique_ptr<Track>(new Track(pos, dir, Track::Spin::u, Track::Flavour(int(cosmic.f)+2), t));
 	
-	return move(elec);
+	return elec;
 }
 
 double Decay::generateDecayTime(Track::Flavour f)

@@ -29,51 +29,39 @@ void Absorber::SetProb(double probability)
   return;
 }
 
-double Absorber::GetAbsorptionLenght(const Track & ray) const
+double Absorber::GetAbsorptionLenght() const
 {
-  double probability = prob;
-  double path = SpaceTravelled(ray); 
-  
   std::uniform_real_distribution<double> dis(0, prob);		// genera la posizione in cui si ferma il raggio cosmico
-  double lenght = dis(gen());
   
-  return lenght;
+  return dis(gen());
 }
 
-Position3D Absorber::Absorbing_ornot(const Track & ray) const 
+Option<double> Absorber::Absorbing_ornot(const Track & ray, const Interaction& inter) const 
 {
-  double abs_lenght;
-  double space_travelled;
 
   unsigned int abs_number = 0;
   
-  abs_lenght =       GetAbsorptionLenght(ray);
-  space_travelled =  SpaceTravelled(ray);
+  double abs_lenght =       GetAbsorptionLenght();
+  double space_travelled =  SpaceTravelled(ray, inter);
   if(abs_lenght < space_travelled) abs_number = 1;
-  
-  Position3D interaction_point = {std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN()};
   
   if(abs_number == 0)
   {
-    return interaction_point;
+    return No<double>();
   }
   
-  double phi,theta;
-  phi = ray.dir.phi;
-  theta = ray.dir.theta;
+  double phi = ray.dir.phi;
+  double theta = ray.dir.theta;
   
-  Position3D entering_point = ray.getPosition(intersectionPoints(ray).first);
-  
-  
-  interaction_point.x = entering_point.x					//prima parte data dal punto X d'interazione nell'assorbitore
-		       + abs_lenght * sin(theta) * cos(phi);		//seconda parte data dal progredire all'interno dell'assorbitore
-		      
-  interaction_point.y = entering_point.y					//prima parte data dal punto Y d'interazione nell'assorbitore
-		       + abs_lenght * sin(theta) * sin(phi);		//seconda parte data dal progredire all'interno dell'assorbitore  
-		      
-  interaction_point.z = entering_point.z					//prima parte data dal punto Z d'interazione nell'assorbitore
-		       - abs_lenght * cos(theta);				//seconda parte data dal progredire all'interno dell'assorbitore
+  return intersectionPoints(ray, inter).enter.valueOr(ray.getStart());
+}
 
-
-  return interaction_point;
+void interact(const Track& t, const Interaction& inter) const
+{
+	inter.setCharge(ID, 0);
+		
+	auto endPoint = Absorbing_ornot(ray, inter);
+	
+	if (endPoint)
+		ray.setEnd(*endPoint);
 }

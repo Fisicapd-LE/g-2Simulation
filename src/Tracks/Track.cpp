@@ -11,11 +11,9 @@
 
 using namespace std;
 
-Track::Track(Position3D p, Direction d, Spin s, Flavour f, double t)
-	:pos(p), dir(d), s(s), f(f), time(t)
+Track::Track(Position3D p, Direction d, Spin s, Flavour f, double zStart, time t)
+	:pos(p), dir(d), s(s), f(f), t(t), start(zStart), end(numeric_limits<double>::max())
 {
-	for(auto& points: intersectionPoints)
-		points = {numeric_limits<double>::quiet_NaN(),numeric_limits<double>::quiet_NaN()};
 }
 
 Track::~Track()
@@ -28,7 +26,7 @@ std::unique_ptr<Track> Track::generate()
 	Direction d = generateDir();
 	Spin s = generateSpin();
 	Flavour f = generateFlavour();
-	return unique_ptr<Track>(new Track(p, d, s, f));
+	return unique_ptr<Track>(new Track(p, d, s, f, -numeric_limits<double>::max()));
 }
 
 Position3D Track::generatePos()
@@ -83,12 +81,4 @@ Track::Flavour Track::generateFlavour()
 	return Flavour::muP;
 }
 
-void Track::addIntersectionPoint(int objectID, std::pair<double, double> points) const
-{
-	intersectionPoints.at(objectID) = points;
-}
 
-std::pair<double, double> Track::getIntersectionPoint(int objectID) const
-{
-	return intersectionPoints.at(objectID);
-}
