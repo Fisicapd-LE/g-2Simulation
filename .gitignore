@@ -1,4 +1,10 @@
 **/trash
 .d
 Simulation
-.directory 
+.directory
+*.png
+*.pdf
+*.root
+*.tex
+*.svg
+*.C
