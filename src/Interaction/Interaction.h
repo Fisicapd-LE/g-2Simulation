@@ -1,11 +1,16 @@
 #ifndef INTERACTION_H_
 #define INTERACTION_H_
 
-#include "Utilities/Option.h"
+#include "Option/Option.h"
 
-#include "Configuration/Configuration.h"
+#include "Utilities/channels.h"
 
 #include <array>
+#include <memory>
+#include <vector>
+
+class Track;
+class ActiveObject;
 
 struct Intersections
 {
@@ -17,7 +22,7 @@ struct ObjectInteraction
 {
 	ObjectInteraction()
 		:points{}, 
-		charge(0)
+		charge{}
 	{};
 	Option<Intersections> points;
 	Option<double> charge;
@@ -27,36 +32,47 @@ class Interaction
 {
 	private:
 	
-		mutable std::array<ObjectInteraction, Configuration::nMaxObjects> interactions;
+		mutable std::array<ObjectInteraction, nMaxObjects> interactions;
 		
 		std::unique_ptr<Track> track;
 		
-		const std::array<std::unique_ptr<ActiveObject>, Configuration::nMaxObjects>& objects;
+		const std::vector<std::unique_ptr<ActiveObject>>* objects;
 		
 		mutable bool ran;
-		
-		void runInteraction() const;
 	
 	public:
 		Interaction(std::unique_ptr<Track>&& track, 
-				const std::array<std::unique_ptr<ActiveObject>, Configuration::nMaxObjects>& objects)
-			:track(std::move(track)), objects(objects), ran(false)
-		{};
+				const std::vector<std::unique_ptr<ActiveObject>>& objects);
+		Interaction(const Interaction&) = delete;
+		Interaction& operator=(const Interaction&) = delete;
+		Interaction(Interaction&&) = default;
+		Interaction& operator=(Interaction&&) = default;
+		~Interaction();
 		
 		std::unique_ptr<Track> getDecay() const;
+		
+		bool completed() const
+		{
+			return ran;
+		};
 		
 		bool intersectionsComputed(int objectID) const
 		{
 			return static_cast<bool>(interactions.at(objectID).points);
 		};
-		bool chargeComputed() const{
+		bool chargeComputed(int objectID) const
+		{
 			return static_cast<bool>(interactions.at(objectID).charge);
 		};
 		
+		void runInteraction() const;
+		
 		void addIntersectionPoint(int objectID, Intersections points) const;
-		Intersections getIntersectionPoint(int objectID) const;
+		Intersections getIntersectionPoint(int objectID, bool checked = true) const;
 		void addCharge(int objectID, double charge) const;
-		double getCharge(int objectID) const;
+		double getCharge(int objectID, bool checked = true) const;
+		
+		double getTime () const;
 
 };
 	

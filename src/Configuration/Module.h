@@ -1,12 +1,15 @@
 #ifndef MODULE_H_
 #define MODULE_H_
 
-#include "Configuration.h"
+#include "Option/Option.h"
 
-class Configuration::Module
+class Module
 {
-	using time = long;
-	virtual void process(time t) = 0;
+	public:
+		virtual ~Module();
+		using time = long;
+		
+		virtual void sendTrig(time muonTime, Option<time> elecTime) = 0;
 	
 };
 

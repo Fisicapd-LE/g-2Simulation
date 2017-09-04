@@ -12,6 +12,8 @@
 
 #include "Scintillator.h"
 
+#include <iostream>
+
 using namespace std;
 
 Scintillator::Scintillator(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen, short int mode, double width):
@@ -32,15 +34,20 @@ void Scintillator::SetConv_ratio(double ratio)
 }
 
 
-double Scintillator::GetSingleCharge(const Track & ray) const
+double Scintillator::GetSingleCharge(const Track & ray, const Interaction& inter) const
 {
-  
-  double ratio = conv_ratio;
-  return SpaceTravelled(ray) * conv_ratio;
+  //double ratio = conv_ratio;
+  return SpaceTravelled(ray, inter) * conv_ratio;
 }
 
-void interact(const Track& t, const Interaction& inter) const
+double Scintillator::getCharge(const Track& t, const Interaction& inter) const
 {
-	inter.setCharge(GetSingleCharge(t));
+	double charge = GetSingleCharge(t, inter);
+	return charge;
+}
+
+double Scintillator::getDecayPoint(const Track& t, const Interaction& inter) const
+{
+	return numeric_limits<double>::max();
 }
 

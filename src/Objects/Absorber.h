@@ -29,7 +29,8 @@ public:
   void SetProb(double prob);
   Option<double> Absorbing_ornot(const Track & ray, const Interaction& inter) const;
   
-  void interact(const Track& t, const Interaction& inter) const override;
+  double getCharge(const Track& t, const Interaction& inter) const override;
+  double getDecayPoint(const Track& t, const Interaction& inter) const override;
   
 private:
   

@@ -1,5 +1,7 @@
 #include "Decay.h"
 
+#include <iostream>
+
 using namespace std;
 
 Direction changeAxis(const Direction& point, const Direction& axis)
@@ -48,7 +50,9 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos)
 	static const double muB = 1.;
 	
 	if(cosmic.f >= Track::Flavour::eP)
+	{
 		return unique_ptr<Track>(nullptr);
+	}
 	
 	double t = generateDecayTime(cosmic.f);
 	
@@ -56,9 +60,10 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos)
 	
 	Direction normal = {atan2(b.y,b.x), M_PI_2};
 	
-	double rotationAngle = -sqrt(b.x*b.x + b.y*b.y)*g*muB/2;
+	double rotationAngle = -sqrt(b.x*b.x + b.y*b.y)*t*1e-3*g*muB/2;
 	if (cosmic.s == Track::Spin::d)
 		rotationAngle = -rotationAngle;
+	//clog << rotationAngle << endl;
 	
 	Direction spinDir = rotate(Direction{0, (cosmic.s == Track::Spin::u)?0:M_PI}, normal, rotationAngle);
 	
@@ -66,7 +71,9 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos)
 	
 	dir = changeAxis(dir, reflect(spinDir));		// adjust it to spin direction
 	
-	auto elec = unique_ptr<Track>(new Track(pos, dir, Track::Spin::u, Track::Flavour(int(cosmic.f)+2), t));
+	auto elec = unique_ptr<Track>(new Track(pos, dir, Track::Spin::u, Track::Flavour(int(cosmic.f)+2), 0, t));
+	
+	//clog << "Decay2: " << elec->t << endl;
 	
 	return elec;
 }
@@ -83,6 +90,10 @@ double Decay::generateDecayTime(Track::Flavour f)
 		if (tf < t)
 			t = tf;
 	}
+	
+	//clog << "Decay: " << int(t) << endl;;
+	
+	return t;
 }
 
 Direction Decay::generateElecDir()

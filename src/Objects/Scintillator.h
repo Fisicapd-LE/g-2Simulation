@@ -30,14 +30,15 @@ public:
   
   void SetConv_ratio(double ratio);
   
-  void interact(const Track& t, const Interaction& inter) const override;
+  double getCharge(const Track& t, const Interaction& inter) const override;
+  double getDecayPoint(const Track& t, const Interaction& inter) const override;
   
 private:
   double conv_ratio;
   double mode;
   double width;
   
-  double GetSingleCharge(const Track & ray) const;
+  double GetSingleCharge(const Track & ray, const Interaction& inter) const;
 };
 
 #endif /* SCINTILLATOR_H_ */

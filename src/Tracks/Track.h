@@ -10,7 +10,8 @@
 
 #include "Utilities/Generator.h"
 #include "Utilities/Vector3D.h"
-#include "Utilities/Option.h"
+
+#include "Option/Option.h"
 
 #include <memory>
 

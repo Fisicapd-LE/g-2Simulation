@@ -42,10 +42,16 @@ public:
   void SetZposition(double z);
   
   Intersections intersectionPoints(const Track& t, const Interaction& inter) const;
+  virtual double getCharge(const Track& t, const Interaction& inter) const = 0;
+  virtual double getDecayPoint(const Track& t, const Interaction& inter) const = 0;
   
   bool isInside(const Track& t) const;
   
-  virtual void interact(const Track& t, const Interaction& inter) const = 0;
+  void interact(Track& t, const Interaction& inter) const;
+  
+  void setInteractionPoints(Track& t, const Interaction& inter) const;
+  void setCharge(Track& t, const Interaction& inter) const;
+  void setDecayPoint(Track& t, const Interaction& inter) const;
   
 protected:
   
@@ -57,7 +63,7 @@ protected:
   double ydisplace;
 //   double zdisplace;
 
-  double SpaceTravelled (const Track & ray) const;	// function to compute the space cosmic ray travels inside 
+  double SpaceTravelled (const Track & track, const Interaction& inter) const;	// function to compute the space cosmic ray travels inside 
 																	// the active object before going out
 																	// interaction with matter has to be exposed by setting the zmax
 																	

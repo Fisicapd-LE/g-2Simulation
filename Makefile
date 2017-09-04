@@ -4,16 +4,17 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 POSTCOMPILE = @mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 
-CFLAGS = -std=c++11 -O3 -Wall -Wpedantic -Wextra
+CFLAGS = -std=c++11 -O3 -Wall -Wpedantic -Wextra `root-config --cflags`
+LDFLAGS = `root-config --libs`
 INCLUDE = src
 DIRS = $(sort $(dir $(wildcard src/*/.)))
-SRCS = $(foreach DIR,$(DIRS),$(wildcard $(DIR)*.cpp))  src/Main.cpp src/Configuration.cpp
+SRCS = $(foreach DIR,$(DIRS),$(wildcard $(DIR)*.cpp))  src/Main.cpp
 OBJECTS = $(addsuffix .o,$(basename $(SRCS)))
 
 $(foreach folder,$(subst src,.d,$(DIRS)), $(shell mkdir -p $(folder) > /dev/null))
 
 src/Simulation: $(OBJECTS)
-	g++ $(CFLAGS) -o Simulation $(OBJECTS)
+	g++ $(CFLAGS) -o Simulation $(OBJECTS) $(LDFLAGS)
 	
 .PHONY: $(DIRS) clean deps
 

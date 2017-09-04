@@ -14,6 +14,9 @@
 
 #include <random>
 #include <limits>
+#include <iostream>
+
+using namespace std;
 
 Absorber::Absorber(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen, double prob):
   ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
@@ -50,18 +53,22 @@ Option<double> Absorber::Absorbing_ornot(const Track & ray, const Interaction& i
     return No<double>();
   }
   
-  double phi = ray.dir.phi;
-  double theta = ray.dir.theta;
-  
-  return intersectionPoints(ray, inter).enter.valueOr(ray.getStart());
+  auto enter = intersectionPoints(ray, inter).enter;
+  return enter?*enter:ray.getStart() + abs_lenght;
 }
 
-void interact(const Track& t, const Interaction& inter) const
+double Absorber::getCharge(const Track& t, const Interaction& inter) const
 {
-	inter.setCharge(ID, 0);
-		
-	auto endPoint = Absorbing_ornot(ray, inter);
+	return 0;
+}
+
+double Absorber::getDecayPoint(const Track& t, const Interaction& inter) const
+{
+	auto endPoint = Absorbing_ornot(t, inter);
 	
 	if (endPoint)
-		ray.setEnd(*endPoint);
+	{
+		return *endPoint;
+	}
+	return numeric_limits<double>::max();
 }
