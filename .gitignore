@@ -8,3 +8,4 @@ Simulation
 *.tex
 *.svg
 *.C
+results/*

@@ -19,26 +19,31 @@
 #include "Configuration/Arietta.h"
 #include "Configuration/Trigger.h"
 #include "Configuration/Arietta.h"
+#include "Configuration/B.h"
 
 #include <iostream>
 #include <vector>
 #include <cmath>
 
+#include <TH1.h>
+
 using namespace std;
 
 int main(int argc, char** argv)
 {
+	TH1::AddDirectory(false);
 	unique_ptr<AnalysisInfo> info(new AnalysisInfo(argc, argv));  //argomenti da riga di comando
 
 	clog << "Configuring\n";
 	auto conf = Configuration::create()->startConfiguring()
-					.addObject<Scintillator>(6.9)
-					.addObject<Scintillator>(46.9)
-					.addObject<Scintillator>(60.6)
-					.addObject<Scintillator>(74.3)
-					.addObject<Absorber>(100)
-					.addTrigger({3.5, 3.5, 3.5, 3.5}, 0xf)
+					.addObject<Scintillator>(-5.1)
+					.addObject<Scintillator>(-18.8)
+					.addObject<Scintillator>(-32.5)
+					.addObject<Scintillator>(-72.5)
+					.addObject<Absorber>(-52.5)
+					.addTrigger({3.5, 3.5, 3.5, 3.5}, 0xf, 0x8)
 						.toModule<Arietta>("output")
+					.loadB(info->contains("-B")?info->value("-B"):"#simple", 2.5)
 					.configure();
 			
 	long  nEvent = 100000;
@@ -55,6 +60,9 @@ int main(int argc, char** argv)
 		event = Track::generate();			//generazione evento
 
 		conf->process(move(event));
+		
+		if (sim%2000000 == 0)
+			clog << sim << endl;
 
 	}
 

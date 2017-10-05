@@ -12,7 +12,7 @@
 
 using namespace std;
 
-Track::Track(Position3D p, Direction d, Spin s, Flavour f, double zStart, time t)
+Track::Track(Position3D p, Direction d, Spin s, Flavour f, double zStart, Time t)
 	:pos(p), dir(d), s(s), f(f), t(t), start(zStart), end(numeric_limits<double>::max())
 {
 }
@@ -25,8 +25,8 @@ std::unique_ptr<Track> Track::generate()
 {
 	Position3D p = generatePos();
 	Direction d = generateDir();
-	Spin s = generateSpin();
 	Flavour f = generateFlavour();
+	Spin s = generateSpin(f);
 	return unique_ptr<Track>(new Track(p, d, s, f, -numeric_limits<double>::max()));
 }
 
@@ -46,7 +46,7 @@ Position3D Track::generatePos()
 Direction Track::generateDir()
 {
 	std::uniform_real_distribution<double> dis(0, 2*M_PI);	// genera phi, uniforme
-
+	
 	Direction dir;
 	dir.phi = dis(gen());
 	double cosNum;
@@ -55,21 +55,21 @@ Direction Track::generateDir()
 	{
 		cosNum = dis(gen())/4;
 		uniNum = generate_canonical<double, 16>(gen());
-	}while(uniNum > (4/M_PI)*(cos(cosNum)*cos(cosNum)));	// genera theta, con algoritmo hit or miss
+	}while(uniNum > (cos(cosNum)*cos(cosNum)));	// genera theta, con algoritmo hit or miss
 	
-	dir.theta = cosNum;
+	dir.theta = M_PI - cosNum;
 
 	return dir;
 }
 
-Track::Spin Track::generateSpin()
+Track::Spin Track::generateSpin(Flavour f)
 {
 	std::uniform_real_distribution<double> dis(0, 1);
 	
-	if (dis(gen()) < (1 + polarization())/2)
-		return Spin::u;
-		
-	return Spin::d;
+	if (dis(gen()) < polarization() + 0.5)
+		return (f == Flavour::muP)?Spin::b:Spin::f;
+	
+	return (f == Flavour::muP)?Spin::f:Spin::b;
 }	
 
 Track::Flavour Track::generateFlavour()

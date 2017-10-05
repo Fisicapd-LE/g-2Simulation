@@ -19,7 +19,7 @@ using namespace std;
 class Scintillator: public ActiveObject
 {
 public:
-  Scintillator(double zheight = 0, double xdisplace = 0, double ydisplace = 0, double xlen = 600, double ylen = 250, double zlen = 15, short int mode = 8, double width = 10);
+  Scintillator(double zheight = 0, double xdisplace = 0, double ydisplace = 0, double xlen = 600, double ylen = 250, double zlen = 10, short int mode = 8, double width = 10);
   
   virtual ~Scintillator();
   

@@ -18,7 +18,7 @@ public:
 //   Absorber();
 //   Absorber(double zheight);
 //   Absorber(double zheight, double xdisplace, double ydisplace);
-  Absorber(double zheight = 0, double xdisplace = 0, double ydisplace = 0, double xlen = 600, double ylen = 250, double zlen = 15, double prob = 1);
+  Absorber(double zheight = 0, double xdisplace = 0, double ydisplace = 0, double xlen = 600, double ylen = 250, double zlen = 25, double prob = 0);
   
   virtual ~Absorber();
   

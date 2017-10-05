@@ -15,13 +15,17 @@
 #include <random>
 #include <limits>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
 Absorber::Absorber(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen, double prob):
   ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
   prob ( prob )
-  { }
+{ 
+	if (prob == 0)
+		this->prob = 20;
+}
 
 Absorber::~Absorber()
   { }
@@ -54,7 +58,9 @@ Option<double> Absorber::Absorbing_ornot(const Track & ray, const Interaction& i
   }
   
   auto enter = intersectionPoints(ray, inter).enter;
-  return enter?*enter:ray.getStart() + abs_lenght;
+   
+  
+  return (enter?*enter:ray.getStart()) + abs_lenght;
 }
 
 double Absorber::getCharge(const Track& t, const Interaction& inter) const

@@ -6,12 +6,14 @@
 
 #include "Tracks/Track.h"
 
+#include "Configuration/B.h"
+
 #include <iostream>
 
 using namespace std;
 
-Interaction::Interaction(unique_ptr<Track>&& track, const std::vector<std::unique_ptr<ActiveObject>>& objects)
-	:track(std::move(track)), objects(&objects), ran(false)
+Interaction::Interaction(unique_ptr<Track>&& track, const std::vector<std::unique_ptr<ActiveObject>>& objects, const BGen* bg)
+	:track(std::move(track)), objects(&objects), ran(false), bg(bg)
 {
 }
 
@@ -64,6 +66,8 @@ double Interaction::getCharge(int objectID, bool checked) const
 		
 	if(!objects->at(objectID)->isInside(*track))
 		interactions.at(objectID).charge = 0;
+		
+	//clog << int(track->f) << endl;
 	
 	return *interactions.at(objectID).charge;
 }
@@ -96,7 +100,7 @@ std::unique_ptr<Track> Interaction::getDecay() const
 		return unique_ptr<Track>(nullptr);
 	}
 	
-	return Decay::decay(*track, track->getPosition(track->getEnd()));
+	return Decay::decay(*track, track->getPosition(track->getEnd()), *bg);
 }
 
 double Interaction::getTime () const

@@ -3,13 +3,14 @@
 
 #include "Option/Option.h"
 
+#include "Utilities/Time.h"
+
 class Module
 {
 	public:
 		virtual ~Module();
-		using time = long;
 		
-		virtual void sendTrig(time muonTime, Option<time> elecTime) = 0;
+		virtual void sendTrig(Time muonTime, Option<Time> elecTime) = 0;
 	
 };
 

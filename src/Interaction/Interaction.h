@@ -11,6 +11,7 @@
 
 class Track;
 class ActiveObject;
+class BGen;
 
 struct Intersections
 {
@@ -39,10 +40,12 @@ class Interaction
 		const std::vector<std::unique_ptr<ActiveObject>>* objects;
 		
 		mutable bool ran;
+		
+		const BGen* bg;
 	
 	public:
 		Interaction(std::unique_ptr<Track>&& track, 
-				const std::vector<std::unique_ptr<ActiveObject>>& objects);
+				const std::vector<std::unique_ptr<ActiveObject>>& objects, const BGen* bg);
 		Interaction(const Interaction&) = delete;
 		Interaction& operator=(const Interaction&) = delete;
 		Interaction(Interaction&&) = default;

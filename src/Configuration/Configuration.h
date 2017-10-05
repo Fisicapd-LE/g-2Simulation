@@ -16,6 +16,7 @@ class ActiveObject;
 class Trigger;
 class Module;
 class ConfigurationBuilder;
+class BGen;
 
 class Configuration final
 {
@@ -37,6 +38,8 @@ class Configuration final
 		std::vector<std::unique_ptr<ActiveObject>> objects;
 		std::vector<std::unique_ptr<Trigger>> triggers;
 		std::vector<std::unique_ptr<Module>> modules;
+		
+		std::unique_ptr<BGen> bg;
 		
 };
 

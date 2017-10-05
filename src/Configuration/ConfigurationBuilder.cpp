@@ -2,6 +2,7 @@
 
 #include "Configuration.h"
 #include "Module.h"
+#include "B.h"
 
 #include "Objects/ActiveObject.h"
 
@@ -27,4 +28,11 @@ ConfigurationBuilder::TempTrigger ConfigurationBuilder::addTrigger(std::array<do
 std::unique_ptr<Configuration> ConfigurationBuilder::configure()
 {
 	return move(conf);
+}
+
+ConfigurationBuilder& ConfigurationBuilder::loadB(std::string filename, double delta)
+{
+	conf->bg.reset(new BGen(filename, delta));
+	
+	return *this;
 }

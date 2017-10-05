@@ -10,6 +10,7 @@
 
 #include "Utilities/Generator.h"
 #include "Utilities/Vector3D.h"
+#include "Utilities/Time.h"
 
 #include "Option/Option.h"
 
@@ -21,18 +22,18 @@ class Track: public Generator
 {
 	friend Decay;
 	public:
-		using time = long;
 		virtual ~Track();
 		
 		enum struct Spin: char
 		{
-			d = -1,
-			u = 1
+			b = -1,
+			f = 1,
+			n = 0
 		};
 		
 		enum class Flavour
 		{
-			muP,
+			muP = 0,
 			muN,
 			eP,
 			eN
@@ -42,7 +43,7 @@ class Track: public Generator
 		Direction dir;
 		Spin s;
 		Flavour f;
-		time t;
+		Time t;
 		
 		double getStart() const
 		{
@@ -66,19 +67,19 @@ class Track: public Generator
 			return Position3D{
 				pos.x + s*sin(dir.theta)*cos(dir.phi),
 				pos.y + s*sin(dir.theta)*sin(dir.phi),
-				pos.z - s*cos(dir.theta)
+				pos.z + s*cos(dir.theta)
 			};
 		};
 		
 	private:
-		Track(Position3D p, Direction d, Spin s, Flavour f, double zStart, time t = 0);
+		Track(Position3D p, Direction d, Spin s, Flavour f, double zStart, Time t = 0);
 		
 		const double start;
 		double end;
 
 		static Position3D generatePos();
 		static Direction generateDir();
-		static Spin generateSpin();
+		static Spin generateSpin(Flavour f);
 		static Flavour generateFlavour();
 		
 		static double polarization()

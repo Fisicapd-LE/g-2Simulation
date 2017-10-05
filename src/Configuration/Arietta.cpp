@@ -3,6 +3,7 @@
 #include <TH1.h>
 #include <TFile.h>
 #include <TDirectory.h>
+#include <TCanvas.h>
 
 #include <iostream>
 
@@ -11,10 +12,10 @@ using namespace std;
 Arietta::Arietta(std::string name, double maximum)
 	:maximum(maximum)
 {
-	hist = new TH1D(name.c_str(), "", 624, 8, 10000);
+	hist = new TH1D(name.c_str(), "", 1250, 0, 10000);
 }
 
-void Arietta::sendTrig(time muonTime, Option<time> elecTime)
+void Arietta::sendTrig(Time muonTime, Option<Time> elecTime)
 {
 	if (!elecTime)
 	{
@@ -38,4 +39,8 @@ Arietta::~Arietta()
 	
 	delete f;
 	currentDir->cd();
+	
+	TCanvas c;
+	hist->Draw();
+	c.SaveAs("output.png");
 }

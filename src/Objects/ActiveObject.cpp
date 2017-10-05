@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 #include "ActiveObject.h"
 #include "Tracks/Track.h"
@@ -78,9 +79,10 @@ Intersections ActiveObject::intersectionPoints(const Track & track, const Intera
 	zmax = std::max(z1, z2);
 	if (zmin > track.getEnd() or zmax < track.getStart())
 		return Intersections{No<double>(), No<double>()};
-
+	
+	
 	//x
-	if (phi == M_PI_2 or phi == 3*M_PI_2)
+	if (phi == M_PI_2 or phi == 3*M_PI_2 or theta == 0 or theta == M_PI)
 	{
 		if (x0 < x-dx or x0 > x+dx)
 			return Intersections{No<double>(), No<double>()};
@@ -99,7 +101,7 @@ Intersections ActiveObject::intersectionPoints(const Track & track, const Intera
 		return Intersections{No<double>(), No<double>()};
 
 	//y
-	if (phi == 0 or phi == M_PI)
+	if (phi == 0 or phi == M_PI or theta == 0 or theta == M_PI)
 	{
 		if (y0 < y-dy or y0 > y+dy)
 			return Intersections{No<double>(), No<double>()};
@@ -129,6 +131,9 @@ Intersections ActiveObject::intersectionPoints(const Track & track, const Intera
 		points.exit = smax;
 	else
 		points.exit = No<double>();
+		
+	//if(points.enter and points.exit)
+	//	cout << *points.enter << " " << *points.exit << endl;
 	
 	return points;
 }

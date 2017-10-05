@@ -49,6 +49,8 @@ class ConfigurationBuilder
 		
 		TempTrigger addTrigger(std::array<double, nMaxObjects> thresholds, std::bitset<nMaxObjects> activeCh = 0x0, std::bitset<nMaxObjects> veto = 0x0);
 		
+		ConfigurationBuilder& loadB(std::string filename, double delta);
+		
 		std::unique_ptr<Configuration> configure();
 		
 };

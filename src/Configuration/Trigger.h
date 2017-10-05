@@ -4,6 +4,7 @@
 #include "Option/Option.h"
 
 #include "Utilities/channels.h"
+#include "Utilities/Time.h"
 
 #include <bitset>
 #include <array>
@@ -21,14 +22,13 @@ class Trigger final
 	template <typename T>
 	using ChArray = std::array<T, nMaxObjects>;
 	
-	private:		
-		using time = long;
+	private:
 		
 		Trigger(ChArray<double> thresholds, ChBit activeCh = 0x0, ChBit veto = 0x0);
 	
 		Module* destination;
 	
-		Option<time> processInteraction(const Interaction& inter) const; 
+		Option<Time> processInteraction(const Interaction& inter) const; 
 		
 		const ChArray<double> thresholds;
 		const ChBit mask;

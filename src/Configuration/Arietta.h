@@ -16,7 +16,7 @@ class Arietta: public Module
 		
 		~Arietta();
 		
-		virtual void sendTrig(time muonTime, Option<time> elecTime) override;
+		virtual void sendTrig(Time muonTime, Option<Time> elecTime) override;
 		
 	private:
 		TH1D* hist;

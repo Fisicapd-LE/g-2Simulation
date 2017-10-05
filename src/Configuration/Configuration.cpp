@@ -3,6 +3,7 @@
 #include "ConfigurationBuilder.h"
 #include "Trigger.h"
 #include "Module.h"
+#include "B.h"
 
 #include "Interaction/Interaction.h"
 
@@ -14,7 +15,7 @@ using namespace std;
 
 void Configuration::process(std::unique_ptr<Track>&& cosmic) const
 {
-	Interaction muonInt(std::move(cosmic), objects);
+	Interaction muonInt(std::move(cosmic), objects, bg.get());
 	
 	muonInt.runInteraction();
 	
@@ -24,7 +25,7 @@ void Configuration::process(std::unique_ptr<Track>&& cosmic) const
 	
 	if (elec)
 	{
-		elecInt = Interaction(move(elec), objects);
+		elecInt = Interaction(move(elec), objects, bg.get());
 		elecInt->runInteraction();
 	}
 
