@@ -10,7 +10,7 @@ class TH1D;
 class Arietta: public Module
 {
 	public:
-		Arietta(std::string name, double maximum = 10000);
+		Arietta(std::string name, int nBins, std::string filename, double maximum = 10000);
 		Arietta(Arietta&) = delete;
 		Arietta& operator=(Arietta&) = delete;
 		
@@ -21,6 +21,8 @@ class Arietta: public Module
 	private:
 		TH1D* hist;
 		const double maximum;
+		
+		std::string fileName;
 };
 
 #endif

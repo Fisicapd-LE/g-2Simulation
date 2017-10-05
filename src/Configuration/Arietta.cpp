@@ -9,10 +9,10 @@
 
 using namespace std;
 
-Arietta::Arietta(std::string name, double maximum)
-	:maximum(maximum)
+Arietta::Arietta(std::string name, int nBins, string filename, double maximum)
+	:maximum(maximum), fileName(filename)
 {
-	hist = new TH1D(name.c_str(), "", 1250, 0, 10000);
+	hist = new TH1D(name.c_str(), "", nBins, 0, 10000);
 }
 
 void Arietta::sendTrig(Time muonTime, Option<Time> elecTime)
@@ -33,7 +33,7 @@ Arietta::~Arietta()
 {
 	clog << "Deleting Arietta\n";
 	TDirectory* currentDir = gDirectory;
-	auto f = TFile::Open("test.root", "RECREATE");
+	auto f = TFile::Open(fileName.c_str(), "RECREATE");
 	
 	hist->Write();
 	

@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 					.addObject<Scintillator>(-72.5)
 					.addObject<Absorber>(-52.5)
 					.addTrigger({3.5, 3.5, 3.5, 3.5}, 0xf, 0x8)
-						.toModule<Arietta>("output")
+						.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, info->contains("-o")?info->value("-o"):"output.root")
 					.loadB(info->contains("-B")?info->value("-B"):"#simple", 2.5)
 					.configure();
 			
