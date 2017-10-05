@@ -106,6 +106,8 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos, const BGen& 
 		
 		//cout << acos(sin(dir.theta)*cos(dir.phi)*sin(spinDir.theta)*cos(spinDir.phi) + sin(dir.theta)*sin(dir.phi)*sin(spinDir.theta)*sin(spinDir.phi) + cos(dir.theta)*cos(spinDir.theta)) << " ";
 		
+		//cout << sin(dir.theta)*cos(dir.phi)*sin(spinDir.theta)*cos(spinDir.phi) + sin(dir.theta)*sin(dir.phi)*sin(spinDir.theta)*sin(spinDir.phi) + cos(dir.theta)*cos(spinDir.theta) << " ";
+		
 		//cout << rotationAngle << " ";
 		//cout << spinDir.theta << " ";
 		//cout << dir.theta << " ";
@@ -146,6 +148,13 @@ Direction Decay::generateElecDir()
 	
 	double cosNum;
 	double uniNum;
+	
+	uniNum = generate_canonical<double, 16>(gen());
+	cosNum = -3 + 2*sqrt(1 + 3*uniNum);
+	
+	dir.theta = acos(cosNum);
+	
+	/*
 	do
 	{
 		cosNum = dis(gen())/2;
@@ -153,6 +162,7 @@ Direction Decay::generateElecDir()
 	}while(uniNum > (1 + a*cos(cosNum))/(1 + a));	// genera theta, con algoritmo hit or miss
 	
 	dir.theta = cosNum;
+	*/
 
 	return dir;
 }
