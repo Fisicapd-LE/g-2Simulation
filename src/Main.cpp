@@ -19,15 +19,12 @@
 #include "Configuration/Arietta.h"
 #include "Configuration/Trigger.h"
 #include "Configuration/Arietta.h"
-#include "Configuration/B.h"
 
 #include <iostream>
 #include <vector>
 #include <cmath>
 
 #include <TH1.h>
-
-#include <ROOT/TThreadExecutor.hxx>
 
 using namespace std;
 
