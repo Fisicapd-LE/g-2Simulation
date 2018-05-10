@@ -18,12 +18,16 @@ void Trigger::processEvent(const Interaction& muonInt, const Option<Interaction>
 	auto muonTime = processInteraction(muonInt);
 	
 	if (!muonTime)
+	{
 		return;
+	}
 		
 	Option<Time> elecTime;
 	
 	if (elecInt)
+	{
 		elecTime = processInteraction(*elecInt);
+	}
 	
 	destination->sendTrig(*muonTime, elecTime);
 }
@@ -33,9 +37,11 @@ Option<Time> Trigger::processInteraction(const Interaction& inter) const
 	ChBit signal;
 	for (int ch = 0; ch < nMaxObjects; ch++)
 	{
-		//clog << inter.getCharge(ch) << " " << thresholds[ch] << endl;
+		//clog << ch << " " << inter.getCharge(ch) << " " << thresholds[ch] << endl;
 		if (inter.getCharge(ch) > thresholds[ch])
+		{
 			signal.set(ch);
+		}
 		//cout << signal[ch] << " ";
 	}
 	//cout << endl;
@@ -43,6 +49,8 @@ Option<Time> Trigger::processInteraction(const Interaction& inter) const
 	ChBit chOut = mask | (signal ^ veto);
 	
 	bool triggered = chOut.all();
+	
+	//clog << "Triggered? " << triggered << endl;
 	
 	if (triggered)
 		return inter.getTime();

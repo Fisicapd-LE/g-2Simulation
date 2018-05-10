@@ -13,41 +13,49 @@
 #include "Scintillator.h"
 
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
-Scintillator::Scintillator(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen, short int mode, double width):
-  ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
-  mode( mode ),
-  width( width )
-  {
-    conv_ratio = mode / width;
-  }
+Scintillator::Scintillator(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen, short int mode, double width)
+	:ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
+	mode( mode ),
+	width( width )
+{
+	conv_ratio = mode / width;
+}
 
 Scintillator::~Scintillator()
-  { }
+{ }
 
-void Scintillator::SetConv_ratio(double ratio)
+void Scintillator::setConvRatio(double ratio)
 {
-  conv_ratio = ratio;
-  return;
+	conv_ratio = ratio;
+	return;
 }
 
-
-double Scintillator::GetSingleCharge(const Track & ray, const Interaction& inter) const
+double Scintillator::getCharge(double start, double end) const
 {
-  //double ratio = conv_ratio;
-  return SpaceTravelled(ray, inter) * conv_ratio;
+	return (end - start)*conv_ratio;
 }
 
-double Scintillator::getCharge(const Track& t, const Interaction& inter) const
+double Scintillator::getRange(double energy, Track::Flavour f, double& magicNumber) const
 {
-	double charge = GetSingleCharge(t, inter);
-	return charge;
+	if ( f == Track::Flavour::muP or f == Track::Flavour::muN)
+		return numeric_limits<double>::max();
+		
+	if (magicNumber == 0)
+	{
+		magicNumber = 	2*		// mm/MeV
+						1000*	// MeV/GeV
+						energy;	// GeV
+	}
+	return 	magicNumber;
 }
 
-double Scintillator::getDecayPoint(const Track& t, const Interaction& inter) const
+double Scintillator::getEnergyLoss(double, Track::Flavour, double length, double& magicNumber) const
 {
-	return numeric_limits<double>::max();
+	magicNumber -= length;
+	return 0;
 }
 

@@ -19,13 +19,13 @@ using namespace std;
 int ActiveObject::nObjects = 0;
 
 ActiveObject::ActiveObject(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen):
+ID(nObjects),
 zposition (zheight),
 xlen(xlen),
 ylen(ylen),
 zlen(zlen),
 xdisplace(xdisplace),
-ydisplace(ydisplace),
-ID(nObjects)
+ydisplace(ydisplace)
 {
 	nObjects++; 
 }
@@ -34,21 +34,15 @@ ActiveObject::~ActiveObject()
 {
 }
 
-void ActiveObject::SetZposition(double z)
+void ActiveObject::setZposition(double z)
 {
   zposition = z;
   return;
 } 
 
 
-Intersections ActiveObject::intersectionPoints(const Track & track, const Interaction& inter) const
+Option<Intersections> ActiveObject::computeIntersectionPoints(const Track & track) const
 {
-	if(inter.completed())
-		return inter.getIntersectionPoint(ID);
-		
-	if (inter.intersectionsComputed(ID))
-		return inter.getIntersectionPoint(ID, false);
-	
 	Intersections points;
 	
 	double x0,y0,z0,phi,theta;
@@ -77,15 +71,13 @@ Intersections ActiveObject::intersectionPoints(const Track & track, const Intera
 	z2 = (z-z0+dz)/(cos(theta));
 	zmin = std::min(z1, z2);
 	zmax = std::max(z1, z2);
-	if (zmin > track.getEnd() or zmax < track.getStart())
-		return Intersections{No<double>(), No<double>()};
 	
 	
 	//x
 	if (phi == M_PI_2 or phi == 3*M_PI_2 or theta == 0 or theta == M_PI)
 	{
 		if (x0 < x-dx or x0 > x+dx)
-			return Intersections{No<double>(), No<double>()};
+			return No<Intersections>();
 		
 		xmin = -std::numeric_limits<double>::max();
 		xmax = std::numeric_limits<double>::max();
@@ -97,14 +89,12 @@ Intersections ActiveObject::intersectionPoints(const Track & track, const Intera
 		xmin = std::min(x1,x2);
 		xmax = std::max(x1,x2);
 	}
-	if (xmin > track.getEnd() or xmax < track.getStart())
-		return Intersections{No<double>(), No<double>()};
 
 	//y
 	if (phi == 0 or phi == M_PI or theta == 0 or theta == M_PI)
 	{
 		if (y0 < y-dy or y0 > y+dy)
-			return Intersections{No<double>(), No<double>()};
+			return No<Intersections>();
 			
 		ymin = -std::numeric_limits<double>::max();
 		ymax = std::numeric_limits<double>::max();
@@ -116,91 +106,18 @@ Intersections ActiveObject::intersectionPoints(const Track & track, const Intera
 		ymin = std::min(y1,y2);
 		ymax = std::max(y1,y2);
 	}
-	if (ymin > track.getEnd() or ymax < track.getStart())
-		return Intersections{No<double>(), No<double>()};
 
 	smin = max({xmin, ymin, zmin});
 	smax = min({xmax, ymax, zmax});
 	
-	if (smin > track.getStart())
-		points.enter = smin;
-	else
-		points.enter = No<double>();
-		
-	if (smax < track.getEnd())
-		points.exit = smax;
-	else
-		points.exit = No<double>();
-		
-	//if(points.enter and points.exit)
-	//	cout << *points.enter << " " << *points.exit << endl;
+	points.enter = smin;
+	points.exit = smax;
+	
+	if (smin > smax)
+	{
+		return No<Intersections>();
+	}
 	
 	return points;
-}
-
-
-double ActiveObject::SpaceTravelled (const Track & track, const Interaction& inter) const
-{
-	auto points = intersectionPoints(track, inter);
-	
-	double start = track.getStart();
-	double end = track.getEnd();
-	
-	double Max = points.exit.value_or(end);
-	double Min = points.enter.value_or(start);
-
-	if (not(Max > Min))
-		return 0;
-
-	return (Max - Min);
-}
-
-bool ActiveObject::isInside(const Track& t) const
-{
-	double z0 = t.pos.z;
-	double theta = t.dir.theta;
-	double z = zposition;
-	double dz = zlen *.5;
-	double z1 = (z-z0-dz)/(cos(theta));
-	double z2 = (z-z0+dz)/(cos(theta));
-	double zmin = std::min(z1, z2);
-	double zmax = std::max(z1, z2);
-	
-	if (zmin > t.getEnd() or zmax < t.getStart())
-		return false;
-	
-	return true;
-}
-
-void ActiveObject::interact(Track& t, const Interaction& inter) const
-{
-	setInteractionPoints(t, inter);
-	setCharge(t, inter);
-	setDecayPoint(t, inter);
-}
-
-void ActiveObject::setInteractionPoints(Track& t, const Interaction& inter) const
-{
-	if (inter.intersectionsComputed(ID))
-		return;
-		
-	auto points = intersectionPoints(t, inter);
-	
-	inter.addIntersectionPoint(ID, points);
-}
-
-void ActiveObject::setCharge(Track& t, const Interaction& inter) const
-{
-	if (inter.chargeComputed(ID))
-		return;
-	
-	auto charge = getCharge(t, inter);
-	
-	inter.addCharge(ID, charge);
-}
-
-void ActiveObject::setDecayPoint(Track& t, const Interaction& inter) const
-{
-	t.setEnd(getDecayPoint(t, inter));
 }
 	

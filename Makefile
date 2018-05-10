@@ -4,7 +4,7 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 POSTCOMPILE = @mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 
-CFLAGS = -std=c++11 -O3 -Wall -Wpedantic -Wextra `root-config --cflags`
+CFLAGS = -std=c++11 -O3 -Wall -Wpedantic -Wextra `root-config --cflags` -g3
 LDFLAGS = `root-config --libs`
 INCLUDE = src
 DIRS = $(sort $(dir $(wildcard src/*/.)))

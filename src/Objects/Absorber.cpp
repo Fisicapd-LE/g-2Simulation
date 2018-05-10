@@ -17,64 +17,71 @@
 #include <iostream>
 #include <cmath>
 
+#include <TCanvas.h>
+
 using namespace std;
 
-Absorber::Absorber(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen, double prob):
-  ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen),
-  prob ( prob )
-{ 
-	if (prob == 0)
-		this->prob = 20;
+Absorber::Absorber(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen)
+	:ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen)
+{
 }
 
 Absorber::~Absorber()
-  { }
+{}
 
-void Absorber::SetProb(double probability)
-{
-  prob = probability;
-  return;
-}
-
-double Absorber::GetAbsorptionLenght() const
-{
-  std::uniform_real_distribution<double> dis(0, prob);		// genera la posizione in cui si ferma il raggio cosmico
-  
-  return dis(gen());
-}
-
-Option<double> Absorber::Absorbing_ornot(const Track & ray, const Interaction& inter) const 
-{
-
-  unsigned int abs_number = 0;
-  
-  double abs_lenght =       GetAbsorptionLenght();
-  double space_travelled =  SpaceTravelled(ray, inter);
-  if(abs_lenght < space_travelled) abs_number = 1;
-  
-  if(abs_number == 0)
-  {
-    return No<double>();
-  }
-  
-  auto enter = intersectionPoints(ray, inter).enter;
-   
-  
-  return (enter?*enter:ray.getStart()) + abs_lenght;
-}
-
-double Absorber::getCharge(const Track& t, const Interaction& inter) const
+double Absorber::getCharge(double, double) const
 {
 	return 0;
 }
 
-double Absorber::getDecayPoint(const Track& t, const Interaction& inter) const
+double Absorber::getRange(double energy, Track::Flavour f, double&) const
 {
-	auto endPoint = Absorbing_ornot(t, inter);
-	
-	if (endPoint)
-	{
-		return *endPoint;
-	}
-	return numeric_limits<double>::max();
+	//clog << energy << endl;
+	if ( f == Track::Flavour::muP or f == Track::Flavour::muN)
+		return muonRange()->Eval(energy*1000)*10/8.92;
+		
+	return 	electronRange()->Eval(energy*1000)*10/8.92;
 }
+
+double Absorber::getEnergyLoss(double energy, Track::Flavour f, double length, double&) const
+{
+	if ( f == Track::Flavour::muP or f == Track::Flavour::muN)
+		return byStepEnergyLoss(energy, length, muonStoppingPower());
+		
+	return byStepEnergyLoss(energy, length, electronStoppingPower());
+}
+
+double Absorber::byStepEnergyLoss(double energy, double length, TGraph* stoppingPower) const
+{
+	double step = length/10;
+	double loss = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		loss += stoppingPower->Eval(energy*1000) * step/10 * 8.92 / 1000;
+	}
+	return loss;
+}
+
+TGraph* Absorber::electronRange()
+{
+	static unique_ptr<TGraph> eR(new TGraph("electrons.txt", "%lg %*lg %lg"));
+	return eR.get();
+}
+
+TGraph* Absorber::electronStoppingPower()
+{
+	static unique_ptr<TGraph> eSP(new TGraph("electrons.txt", "%lg %lg %*lg"));
+	return eSP.get();
+}
+
+TGraph* Absorber::muonRange()
+{
+	static unique_ptr<TGraph> mR(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
+	return mR.get();
+}
+TGraph* Absorber::muonStoppingPower()
+{
+	static unique_ptr<TGraph> mSP(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
+	return mSP.get();
+}
+

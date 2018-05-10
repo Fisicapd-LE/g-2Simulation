@@ -33,12 +33,12 @@ class Decay: public Generator
 		static constexpr long slowDec = 2197; 	// ns
 		static constexpr long fastDec = 160;	// ns
 		
-		static Direction generateElecDir();
+		static std::pair<Direction, double> generateElecDirEnergy();
 		static Time generateDecayTime(Track::Flavour f);
 		
 		static Direction generateUniformDir();
 		
-		static constexpr double a = 1./3.;
+		//static constexpr double a = 1./3.;
 };
 
 #endif /* ACTIVE_OBJECT_H_ */ 

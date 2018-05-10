@@ -27,6 +27,8 @@
 
 #include <TH1.h>
 
+#include <ROOT/TThreadExecutor.hxx>
+
 using namespace std;
 
 int main(int argc, char** argv)
@@ -36,15 +38,23 @@ int main(int argc, char** argv)
 
 	clog << "Configuring\n";
 	auto conf = Configuration::create()->startConfiguring()
-					.addObject<Scintillator>(-5.1)
-					.addObject<Scintillator>(-18.8)
-					.addObject<Scintillator>(-32.5)
-					.addObject<Scintillator>(-72.5)
-					.addObject<Absorber>(-52.5)
-					.addTrigger({3.5, 3.5, 3.5, 3.5}, 0xf, 0x8)
-						.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, info->contains("-o")?info->value("-o"):"output.root")
-					.loadB(info->contains("-B")?info->value("-B"):"#simple", 2.5)
-					.configure();
+		//.addObject<Scintillator>(-5.1)
+		.addObject<Scintillator>(-18.8)
+		.addObject<Scintillator>(-32.5)
+		.addObject<Scintillator>(-72.5)
+		.addObject<Absorber>(-52.5)
+		.addTrigger(
+			{
+				3.5, 
+				3.5, 
+				3.5,
+			}, 
+			0x7, 
+			0x4
+		)
+			.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, info->contains("-o")?info->value("-o"):"output.root")
+		.loadB(info->contains("-B")?info->value("-B"):"#simple", 2.5)
+		.configure();
 			
 	long  nEvent = 100000;
 	if (info->contains("-n"))	// se hai passato il numero di eventi come parametro
@@ -53,15 +63,18 @@ int main(int argc, char** argv)
 	}
 
 	unique_ptr<Track> event;
+	
+	int interval = nEvent/20;
 
 	clog << "Starting loop\n";
 	for (long sim = 0; sim < nEvent; sim++)	//loop sulla generazione di eventi
 	{
+		//clog << "sim: " << sim << endl;
 		event = Track::generate();			//generazione evento
 
 		conf->process(move(event));
 		
-		if (sim%2000000 == 0)
+		if (sim%interval == 0)
 			clog << sim << endl;
 
 	}

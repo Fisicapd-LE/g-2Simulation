@@ -60,12 +60,13 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos, const BGen& 
 	}
 	
 	Direction dir; 
+	double E;
 	
-	if (cosmic.s == Track::Spin::n)
+	/*if (cosmic.s == Track::Spin::n)
 	{
 		dir = generateUniformDir();
 	}
-	else
+	else*/
 	{
 		B b = bg(pos);
 		
@@ -97,7 +98,7 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos, const BGen& 
 	
 		spinDir = rotate(spinDir, versor(b), rotationAngle);
 	
-		dir = generateElecDir();		// generate electron dir as if spin was on vertical
+		std::tie(dir, E) = generateElecDirEnergy();		// generate electron dir as if spin was on vertical
 	
 		//cout << dir.theta << " ";
 		//cout << dir.phi << " ";
@@ -112,7 +113,7 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos, const BGen& 
 		//cout << endl;
 	}
 	
-	auto elec = unique_ptr<Track>(new Track(pos, dir, Track::Spin::f, Track::Flavour(int(cosmic.f)+2), 0, t));
+	auto elec = unique_ptr<Track>(new Track(pos, dir, Track::Spin::f, Track::Flavour(int(cosmic.f)+2), E, 0, t));
 	
 	//clog << "Decay2: " << pos.x << " " << pos.y << " " << pos.z << endl;
 	
@@ -137,7 +138,7 @@ Time Decay::generateDecayTime(Track::Flavour f)
 	return t;
 }
 
-Direction Decay::generateElecDir()
+pair<Direction, double> Decay::generateElecDirEnergy()
 {
 	std::uniform_real_distribution<double> dis(0, 2*M_PI);	// genera phi, uniforme
 
@@ -145,16 +146,18 @@ Direction Decay::generateElecDir()
 	dir.phi = dis(gen());
 	
 	double cosNum;
+	double xNum;
 	double uniNum;
 	do
 	{
-		cosNum = dis(gen())/2;
+		cosNum = 1 - 2*generate_canonical<double, 16>(gen());
+		xNum = generate_canonical<double, 16>(gen());
 		uniNum = generate_canonical<double, 16>(gen());
-	}while(uniNum > (1 + a*cos(cosNum))/(1 + a));	// genera theta, con algoritmo hit or miss
+	}while( uniNum > (xNum*xNum*(3 - 2*xNum + cosNum*(1 - 2*xNum))) );	// genera theta e E, con algoritmo hit or miss
 	
-	dir.theta = cosNum;
+	dir.theta = acos(cosNum);
 
-	return dir;
+	return {dir, xNum*0.105/2};	// energy in GeV
 }
 
 Direction Decay::generateUniformDir()

@@ -45,14 +45,20 @@ class Track: public Generator
 		Flavour f;
 		Time t;
 		
+		double energy;
+		
+		// so sorry T.T
+		double magic;
+		
 		double getStart() const
 		{
 			return start;
 		};
+		
 		double getEnd() const
 		{
 			return end;
-		}
+		};
 		
 		void setEnd(double end)
 		{
@@ -71,8 +77,18 @@ class Track: public Generator
 			};
 		};
 		
+		void loseEnergy(double energyLoss)
+		{
+			energy -= energyLoss;
+		};
+		
+		void updateMagic(double magicNumber)
+		{
+			magic = magicNumber;
+		}
+		
 	private:
-		Track(Position3D p, Direction d, Spin s, Flavour f, double zStart, Time t = 0);
+		Track(Position3D p, Direction d, Spin s, Flavour f, double energy, double zStart, Time t = 0);
 		
 		const double start;
 		double end;
@@ -81,6 +97,7 @@ class Track: public Generator
 		static Direction generateDir();
 		static Spin generateSpin(Flavour f);
 		static Flavour generateFlavour();
+		static double generateMuonEnergy();
 		
 		static double polarization()
 		{

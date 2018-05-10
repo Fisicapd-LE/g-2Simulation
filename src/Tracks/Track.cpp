@@ -12,8 +12,8 @@
 
 using namespace std;
 
-Track::Track(Position3D p, Direction d, Spin s, Flavour f, double zStart, Time t)
-	:pos(p), dir(d), s(s), f(f), t(t), start(zStart), end(numeric_limits<double>::max())
+Track::Track(Position3D p, Direction d, Spin s, Flavour f, double energy, double zStart, Time t)
+	:pos(p), dir(d), s(s), f(f), t(t), energy(energy), magic(0), start(zStart), end(numeric_limits<double>::max())
 {
 }
 
@@ -27,7 +27,8 @@ std::unique_ptr<Track> Track::generate()
 	Direction d = generateDir();
 	Flavour f = generateFlavour();
 	Spin s = generateSpin(f);
-	return unique_ptr<Track>(new Track(p, d, s, f, -numeric_limits<double>::max()));
+	double energy = generateMuonEnergy();
+	return unique_ptr<Track>(new Track(p, d, s, f, energy, -numeric_limits<double>::max()));
 }
 
 Position3D Track::generatePos()
@@ -80,6 +81,21 @@ Track::Flavour Track::generateFlavour()
 		return Flavour::muN;
 		
 	return Flavour::muP;
+}
+
+double Track::generateMuonEnergy()
+{
+	static double norm = 0.6296296297;
+	double uniNum = generate_canonical<double, 16>(gen());
+	
+	if (uniNum < norm)
+	{
+		return uniNum/norm;
+	}
+	
+	double E = pow(1./(2.7*(uniNum)), 1/1.7);
+	
+	return E;
 }
 
 

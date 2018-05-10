@@ -15,8 +15,8 @@ class BGen;
 
 struct Intersections
 {
-	Option<double> enter;
-	Option<double> exit;
+	double enter;
+	double exit;
 };
 
 struct ObjectInteraction
@@ -26,18 +26,19 @@ struct ObjectInteraction
 		charge{}
 	{};
 	Option<Intersections> points;
-	Option<double> charge;
+	double charge;
 };
 
 class Interaction
 {
 	private:
 	
-		mutable std::array<ObjectInteraction, nMaxObjects> interactions;
+		std::array<ObjectInteraction, nMaxObjects> interactions;
 		
 		std::unique_ptr<Track> track;
 		
 		const std::vector<std::unique_ptr<ActiveObject>>* objects;
+		std::array<ActiveObject*, nMaxObjects> ordered;
 		
 		mutable bool ran;
 		
@@ -52,7 +53,7 @@ class Interaction
 		Interaction& operator=(Interaction&&) = default;
 		~Interaction();
 		
-		std::unique_ptr<Track> getDecay() const;
+		std::unique_ptr<Track> getDecay();
 		
 		bool completed() const
 		{
@@ -68,12 +69,12 @@ class Interaction
 			return static_cast<bool>(interactions.at(objectID).charge);
 		};
 		
-		void runInteraction() const;
+		void runInteraction();
 		
-		void addIntersectionPoint(int objectID, Intersections points) const;
-		Intersections getIntersectionPoint(int objectID, bool checked = true) const;
-		void addCharge(int objectID, double charge) const;
-		double getCharge(int objectID, bool checked = true) const;
+		void setIntersectionPoints(int objectID, Intersections points);
+		Option<Intersections> getIntersectionPoints(int objectID) const;
+		void setCharge(int objectID, double charge);
+		double getCharge(int objectID) const;
 		
 		double getTime () const;
 
