@@ -34,10 +34,14 @@ int main(int argc, char** argv)
 {
 	ROOT::EnableThreadSafety();
 	TH1::AddDirectory(false);
-	
-	UChar_t nThreads = 4;
 
 	unique_ptr<AnalysisInfo> info(new AnalysisInfo(argc, argv));  //argomenti da riga di comando
+	
+	UChar_t nThreads = 4;
+	if (info->contains("-j"))	// se hai passato il numero di eventi come parametro
+	{
+		nThreads = stoi(info->value("-j"));	// leggi il parametro e usalo
+	}
 
 	clog << "Configuring\n";
 	const auto conf = Configuration::create()->startConfiguring()

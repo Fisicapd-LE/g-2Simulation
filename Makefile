@@ -13,7 +13,7 @@ OBJECTS = $(addsuffix .o,$(basename $(SRCS)))
 
 $(foreach folder,$(subst src,.d,$(DIRS)), $(shell mkdir -p $(folder) > /dev/null))
 
-src/Simulation: $(OBJECTS)
+Simulation: $(OBJECTS)
 	g++ $(CFLAGS) -o Simulation $(OBJECTS) $(LDFLAGS)
 	
 .PHONY: $(DIRS) clean deps
