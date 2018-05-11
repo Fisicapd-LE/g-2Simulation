@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 			0x7, 
 			0x4
 		)
-			.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, info->contains("-o")?info->value("-o"):"output.root", nThreads)
+			.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, info->contains("-o")?info->value("-o"):"output.root")
 		.loadB(info->contains("-B")?info->value("-B"):"#simple", 2.5)
 		.configure();
 			

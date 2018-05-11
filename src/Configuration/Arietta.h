@@ -22,8 +22,8 @@ class Arietta: public Module
 		virtual void sendTrig(Time muonTime, Option<Time> elecTime) override;
 		
 	private:
-		ROOT::TThreadedObject<TH1D> hist;
 		const double maximum;
+		ROOT::TThreadedObject<TH1D> hist;
 		
 		std::string fileName;
 };

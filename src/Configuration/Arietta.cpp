@@ -11,7 +11,7 @@
 using namespace std;
 
 Arietta::Arietta(std::string name, int nBins, string filename, double maximum)
-	:hist(name.c_str(), "", nBins, 0, maximum), maximum(maximum), fileName(filename)
+	:maximum(maximum), hist(name.c_str(), "", nBins, 0, maximum), fileName(filename)
 {
 }
 
@@ -25,7 +25,7 @@ void Arietta::sendTrig(Time muonTime, Option<Time> elecTime)
 		return;
 	}
 	
-	//clog << "arietta: " << *elecTime - muonTime << endl;
+	//cout << *elecTime - muonTime << endl;
 		
 	thisHist->Fill(*elecTime - muonTime);
 }
