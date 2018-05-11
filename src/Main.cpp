@@ -26,15 +26,21 @@
 
 #include <TH1.h>
 
+#include <ROOT/TThreadExecutor.hxx>
+
 using namespace std;
 
 int main(int argc, char** argv)
 {
+	ROOT::EnableThreadSafety();
 	TH1::AddDirectory(false);
+	
+	UChar_t nThreads = 4;
+
 	unique_ptr<AnalysisInfo> info(new AnalysisInfo(argc, argv));  //argomenti da riga di comando
 
 	clog << "Configuring\n";
-	auto conf = Configuration::create()->startConfiguring()
+	const auto conf = Configuration::create()->startConfiguring()
 		//.addObject<Scintillator>(-5.1)
 		.addObject<Scintillator>(-18.8)
 		.addObject<Scintillator>(-32.5)
@@ -49,7 +55,7 @@ int main(int argc, char** argv)
 			0x7, 
 			0x4
 		)
-			.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, info->contains("-o")?info->value("-o"):"output.root")
+			.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, info->contains("-o")?info->value("-o"):"output.root", nThreads)
 		.loadB(info->contains("-B")?info->value("-B"):"#simple", 2.5)
 		.configure();
 			
@@ -58,23 +64,27 @@ int main(int argc, char** argv)
 	{
 		nEvent = stol(info->value("-n"));	// leggi il parametro e usalo
 	}
-
-	unique_ptr<Track> event;
 	
 	int interval = nEvent/20;
+	
+	ROOT::TThreadExecutor pool(nThreads);
 
 	clog << "Starting loop\n";
-	for (long sim = 0; sim < nEvent; sim++)	//loop sulla generazione di eventi
-	{
-		//clog << "sim: " << sim << endl;
-		event = Track::generate();			//generazione evento
+	
+	pool.Foreach(
+		[&conf, interval](int sim)
+		{
+			auto event = Track::generate();			//generazione evento
 
-		conf->process(move(event));
+			conf->process(move(event));
 		
-		if (sim%interval == 0)
-			clog << sim << endl;
-
-	}
+			if (sim%interval == 0)
+			{
+				clog << sim << endl;
+			}
+		},
+		ROOT::TSeqL(nEvent)
+	);
 
 	return 0;
 }

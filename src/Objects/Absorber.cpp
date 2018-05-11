@@ -12,7 +12,6 @@
 
 #include "Tracks/Track.h"
 
-#include <random>
 #include <limits>
 #include <iostream>
 #include <cmath>
@@ -64,24 +63,24 @@ double Absorber::byStepEnergyLoss(double energy, double length, TGraph* stopping
 
 TGraph* Absorber::electronRange()
 {
-	static unique_ptr<TGraph> eR(new TGraph("electrons.txt", "%lg %*lg %lg"));
+	thread_local unique_ptr<TGraph> eR(new TGraph("electrons.txt", "%lg %*lg %lg"));
 	return eR.get();
 }
 
 TGraph* Absorber::electronStoppingPower()
 {
-	static unique_ptr<TGraph> eSP(new TGraph("electrons.txt", "%lg %lg %*lg"));
+	thread_local unique_ptr<TGraph> eSP(new TGraph("electrons.txt", "%lg %lg %*lg"));
 	return eSP.get();
 }
 
 TGraph* Absorber::muonRange()
 {
-	static unique_ptr<TGraph> mR(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
+	thread_local unique_ptr<TGraph> mR(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
 	return mR.get();
 }
 TGraph* Absorber::muonStoppingPower()
 {
-	static unique_ptr<TGraph> mSP(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
+	thread_local unique_ptr<TGraph> mSP(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
 	return mSP.get();
 }
 

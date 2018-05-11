@@ -4,8 +4,11 @@
 #include "Module.h"
 
 #include <string>
+#include <vector>
 
-class TH1D;
+#include <ROOT/TThreadedObject.hxx>
+
+#include <TH1.h>
 
 class Arietta: public Module
 {
@@ -19,7 +22,7 @@ class Arietta: public Module
 		virtual void sendTrig(Time muonTime, Option<Time> elecTime) override;
 		
 	private:
-		TH1D* hist;
+		ROOT::TThreadedObject<TH1D> hist;
 		const double maximum;
 		
 		std::string fileName;

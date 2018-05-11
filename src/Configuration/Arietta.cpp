@@ -1,32 +1,33 @@
 #include "Arietta.h"
 
-#include <TH1.h>
 #include <TFile.h>
 #include <TDirectory.h>
 #include <TCanvas.h>
+
+#include <ROOT/TSeq.hxx>
 
 #include <iostream>
 
 using namespace std;
 
 Arietta::Arietta(std::string name, int nBins, string filename, double maximum)
-	:maximum(maximum), fileName(filename)
+	:hist(name.c_str(), "", nBins, 0, maximum), maximum(maximum), fileName(filename)
 {
-	hist = new TH1D(name.c_str(), "", nBins, 0, 10000);
 }
 
 void Arietta::sendTrig(Time muonTime, Option<Time> elecTime)
 {
+	auto thisHist = hist.Get();
 	if (!elecTime)
 	{
-		hist->Fill(maximum);
+		thisHist->Fill(maximum);
 		//clog << "Maximum\n";
 		return;
 	}
 	
 	//clog << "arietta: " << *elecTime - muonTime << endl;
 		
-	hist->Fill(*elecTime - muonTime);
+	thisHist->Fill(*elecTime - muonTime);
 }
 
 Arietta::~Arietta()
@@ -35,12 +36,14 @@ Arietta::~Arietta()
 	TDirectory* currentDir = gDirectory;
 	auto f = TFile::Open(fileName.c_str(), "RECREATE");
 	
-	hist->Write();
+	auto mergedHist = hist.Merge();
+	
+	mergedHist->Write();
 	
 	delete f;
 	currentDir->cd();
 	
 	TCanvas c;
-	hist->Draw();
+	mergedHist->Draw();
 	c.SaveAs("output.png");
 }
