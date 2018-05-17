@@ -118,7 +118,7 @@ void Interaction::runInteraction()
 			break;
 		}
 		
-		track->loseEnergy(obj->getEnergyLoss(track->energy, track->f, points.exit - points.enter, track->magic));
+		track->loseEnergy(obj->getEnergyLoss(track->energy, track->f, exit - enter, track->magic));
 		
 		setCharge(obj->ID, obj->getCharge(enter, exit));
 	}

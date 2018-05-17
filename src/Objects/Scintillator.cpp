@@ -46,9 +46,10 @@ double Scintillator::getRange(double energy, Track::Flavour f, double& magicNumb
 		
 	if (magicNumber == 0)
 	{
-		magicNumber = 	2*		// mm/MeV
+		magicNumber = 	4*		// mm/MeV
 						1000*	// MeV/GeV
 						energy;	// GeV
+		//clog << magicNumber << endl;
 	}
 	return 	magicNumber;
 }

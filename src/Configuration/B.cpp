@@ -16,6 +16,11 @@ template <typename T> int sgn(T val) {
 
 B BGen::operator()(Position3D p) const
 {
+	if (zero)
+	{
+		return {0, 0, 0};
+	}
+	
 	if (simple)
 		return {0.0055, 0, 0};
 		
@@ -33,10 +38,10 @@ B BGen::operator()(Position3D p) const
 }
 
 BGen::BGen(const string& filename, double delta)
-	:delta(delta), simple(filename == "#simple")
+	:delta(delta), simple(filename == "#simple"), zero(filename == "#zero")
 {
 	
-	if (simple)
+	if (simple or zero)
 	{
 		return; // ?
 	}	

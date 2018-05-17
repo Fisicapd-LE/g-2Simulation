@@ -28,6 +28,10 @@ std::unique_ptr<Track> Track::generate()
 	Flavour f = generateFlavour();
 	Spin s = generateSpin(f);
 	double energy = generateMuonEnergy();
+	while(energy < 0)
+	{
+		energy = generateMuonEnergy();
+	}
 	return unique_ptr<Track>(new Track(p, d, s, f, energy, -numeric_limits<double>::max()));
 }
 
@@ -85,15 +89,54 @@ Track::Flavour Track::generateFlavour()
 
 double Track::generateMuonEnergy()
 {
-	static double norm = 0.6296296297;
-	double uniNum = generate_canonical<double, 16>(gen());
+	const double attenuation = 0.36;
 	
-	if (uniNum < norm)
+	const double normg = 1.7/2.7;			// normalization of the g(x)
+	const double normf = 1./0.1079243265;	// normalization of the f(x)
+	
+	const double maxh = normf/normg;
+	
+	// result
+	double E;
+	
+	// variables controlling the loop
+	double h;
+	double y;
+	
+	// Von Neumann rejection method
+	do
 	{
-		return uniNum/norm;
-	}
+		double x = generate_canonical<double, 16>(gen());
+		
+		double g;
 	
-	double E = pow(1./(2.7*(uniNum)), 1/1.7);
+		if (x < normg)
+		{
+			//cout << uniNum/norm << endl;
+			E = x/normg;
+			
+			//cout << E << endl;
+			
+			g = normg;
+		}
+		else
+		{
+			E = pow(1./(2.7*(1-x)), 1/1.7);
+			
+			g = normg*pow(E, -2.7);
+		}
+		//cout << E << endl;
+		
+		double f = normf/(50 + pow(E, 2.7));
+		
+		h = f/g;
+		
+		y = generate_canonical<double, 16>(gen())*maxh;
+	}while(y > h);
+	
+	E -= attenuation; 
+	
+	//cout << E << endl;
 	
 	return E;
 }

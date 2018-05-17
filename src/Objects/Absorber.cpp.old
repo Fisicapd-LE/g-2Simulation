@@ -1,0 +1,142 @@
+/*
+ * Absorber.cpp
+ *
+ *  Created on: 01/ago/2017
+ *      Author: Davide
+ */
+
+// #include "Discriminator.h"
+// #include "Charge.h"
+
+#include "Absorber.h"
+
+#include "Tracks/Track.h"
+
+#include <limits>
+#include <iostream>
+#include <cmath>
+
+#include <TCanvas.h>
+#include <TF1.h>
+
+using namespace std;
+
+double cuDensity = 8.96;
+
+Absorber::Absorber(double zheight, double xdisplace, double ydisplace, double xlen, double ylen, double zlen)
+	:ActiveObject(zheight, xdisplace, ydisplace, xlen, ylen, zlen)
+{
+}
+
+Absorber::~Absorber()
+{}
+
+double Absorber::getCharge(double, double) const
+{
+	return 0;
+}
+
+double Absorber::getRange(double energy, Track::Flavour f, double&) const
+{
+	//clog << energy << endl;
+	if ( f == Track::Flavour::muP or f == Track::Flavour::muN)
+		return muonRange()->Eval(energy*1000)*10/cuDensity;
+		
+	return 	electronRange()->Eval(energy*1000)*10/cuDensity;
+}
+
+TGraph* Absorber::muonRange()
+{
+	thread_local unique_ptr<TGraph> mR(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
+	return mR.get();
+}
+
+TGraph* Absorber::electronRange()
+{
+	thread_local unique_ptr<TGraph> eR(new TGraph("electrons.txt", "%lg %*lg %lg"));
+	return eR.get();
+}
+
+//----------------------------------------------------------------------
+
+class StoppingPower
+{
+	public: 
+		StoppingPower(TGraph* graph, bool draw = false)
+		{
+			TF1 dxde(
+				"dxde", 
+				[graph](double* x, double*)
+				{
+					double& energy = x[0];				// GeV
+					double dedx = -graph->Eval(energy*1000)		// MeV*cm2/g
+							*cuDensity						// g/cm3
+							*1./1000						// GeV/MeV
+							*1./10;							// cm/mm
+					return 1./dedx;
+				},
+				0,
+				0.105658/2,
+				0
+			);
+			
+			y.reset(new TGraph(&dxde, "i"));
+			y->SetName("y_E");
+			yInv.reset(new TGraph(y->GetN(), y->GetX(), y->GetY()));
+			yInv->SetName("E_y");
+			
+			if (draw)
+			{
+				TCanvas c;
+				y->Draw();
+				c.SetLogx();
+				c.SaveAs("y.C");
+			}
+			
+			delete graph;
+		}
+		
+		double finalEnergy(double startingEnergy, double length)
+		{
+			return yInv->Eval(length + y->Eval(startingEnergy));
+		}
+	private:
+		unique_ptr<TGraph> y;
+		unique_ptr<TGraph> yInv;
+};
+
+double Absorber::getEnergyLoss(double energy, Track::Flavour f, double length, double&) const
+{
+	if ( f == Track::Flavour::muP or f == Track::Flavour::muN)
+		return energy - muonStoppingPower()->finalEnergy(length, energy);
+		
+	return energy - electronStoppingPower()->finalEnergy(length, energy);
+}
+
+double Absorber::byStepEnergyLoss(double energy, double length, TGraph* stoppingPower) const
+{
+	int nSteps = 100;
+	double step = length/nSteps;
+	double loss = 0;
+	for (int i = 0; i < nSteps; i++)
+	{
+		loss += stoppingPower->Eval(energy*1000) * step/10 * cuDensity / 1000;
+	}
+	if (energy < loss)
+	{
+		cout << energy - loss << endl;
+	}
+	return loss;
+}
+
+StoppingPower* Absorber::electronStoppingPower()
+{
+	thread_local unique_ptr<StoppingPower> eSP(new StoppingPower(new TGraph("electrons.txt", "%lg %lg %*lg"), true));
+	return eSP.get();
+}
+StoppingPower* Absorber::muonStoppingPower()
+{
+	thread_local unique_ptr<StoppingPower> mSP(new StoppingPower(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %lg")));
+	return mSP.get();
+}
+

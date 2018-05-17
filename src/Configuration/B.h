@@ -27,6 +27,7 @@ class BGen
 		double normalization;
 		
 		const bool simple;
+		const bool zero;
 		
 		void gridToPosition(Position3D * position, const unsigned int & xindex, const unsigned int & yindex, const unsigned int & zindex)
 		{

@@ -23,6 +23,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 #include <TH1.h>
 
@@ -37,10 +38,27 @@ int main(int argc, char** argv)
 
 	unique_ptr<AnalysisInfo> info(new AnalysisInfo(argc, argv));  //argomenti da riga di comando
 	
-	UChar_t nThreads = 4;
+	UChar_t nThreads = 1;
 	if (info->contains("-j"))	// se hai passato il numero di eventi come parametro
 	{
 		nThreads = stoi(info->value("-j"));	// leggi il parametro e usalo
+	}
+	
+	long  nEvent = 100000;
+	if (info->contains("-n"))	// se hai passato il numero di eventi come parametro
+	{
+		nEvent = stol(info->value("-n"));	// leggi il parametro e usalo
+	}
+	
+	string filename = info->contains("-B")?info->value("-B"):"#simple";
+	
+	string cleanname = filename;
+	replace( cleanname.begin(), cleanname.end(), '#', '_');
+	string outfile = "output_" + to_string(nEvent) + "_" + cleanname + ".root";
+	clog << outfile << endl;
+	if (info->contains("-o"))	// se hai passato il numero di eventi come parametro
+	{
+		outfile = info->value("-o");	// leggi il parametro e usalo
 	}
 
 	clog << "Configuring\n";
@@ -59,15 +77,10 @@ int main(int argc, char** argv)
 			0x7, 
 			0x4
 		)
-			.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, info->contains("-o")?info->value("-o"):"output.root")
-		.loadB(info->contains("-B")?info->value("-B"):"#simple", 2.5)
+			.toModule<Arietta>("output", info->contains("-N")?stoi(info->value("-N")):625, outfile)
+		.loadB(filename, 2.5)
 		.configure();
-			
-	long  nEvent = 100000;
-	if (info->contains("-n"))	// se hai passato il numero di eventi come parametro
-	{
-		nEvent = stol(info->value("-n"));	// leggi il parametro e usalo
-	}
+	
 	
 	int interval = nEvent/20;
 	
@@ -75,20 +88,37 @@ int main(int argc, char** argv)
 
 	clog << "Starting loop\n";
 	
+	atomic<int> counter(0);
+	
+	// ah, the things you have to do because of a 4 byte integer...
+	for(int i = 0; i < nEvent/1000000000; i++)
+	{
+		clog << i * 1000000000L << endl;
+		pool.Foreach(
+			[&conf, interval, &counter]()
+			{
+				auto event = Track::generate();			//generazione evento
+
+				conf->process(move(event));
+			
+				counter++;
+			},
+			1000000000
+		);
+	}
 	pool.Foreach(
-		[&conf, interval](int sim)
+		[&conf, interval, &counter]()
 		{
 			auto event = Track::generate();			//generazione evento
 
 			conf->process(move(event));
 		
-			if (sim%interval == 0)
-			{
-				clog << sim << endl;
-			}
+			counter++;
 		},
-		ROOT::TSeqL(nEvent)
+		nEvent%1000000000
 	);
+	
+	clog << "Processed " << counter << " events" << endl;
 
 	return 0;
 }

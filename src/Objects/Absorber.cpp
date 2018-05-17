@@ -12,11 +12,15 @@
 
 #include "Tracks/Track.h"
 
+#include <random>
 #include <limits>
 #include <iostream>
 #include <cmath>
 
 #include <TCanvas.h>
+#include <TH1.h>
+
+const double cuDensity = 8.96;
 
 using namespace std;
 
@@ -37,50 +41,60 @@ double Absorber::getRange(double energy, Track::Flavour f, double&) const
 {
 	//clog << energy << endl;
 	if ( f == Track::Flavour::muP or f == Track::Flavour::muN)
-		return muonRange()->Eval(energy*1000)*10/8.92;
+	{
+		//cout << energy << endl;
+		return muonRange()->Eval(energy*1000)*10/cuDensity;
+	}
 		
-	return 	electronRange()->Eval(energy*1000)*10/8.92;
+	return electronRange()->Eval(energy*1000)*10/cuDensity;
 }
 
 double Absorber::getEnergyLoss(double energy, Track::Flavour f, double length, double&) const
 {
 	if ( f == Track::Flavour::muP or f == Track::Flavour::muN)
+	{
+#ifdef SLOPPY_ABSORBER
+		return 0;
+#else
 		return byStepEnergyLoss(energy, length, muonStoppingPower());
+#endif
+	}
 		
 	return byStepEnergyLoss(energy, length, electronStoppingPower());
 }
 
 double Absorber::byStepEnergyLoss(double energy, double length, TGraph* stoppingPower) const
 {
-	double step = length/10;
+	int nSteps = 100;
+	double step = length/nSteps;
 	double loss = 0;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < nSteps; i++)
 	{
-		loss += stoppingPower->Eval(energy*1000) * step/10 * 8.92 / 1000;
+		loss += stoppingPower->Eval((energy - loss)*1000) * step/10 * cuDensity / 1000;
 	}
 	return loss;
 }
 
 TGraph* Absorber::electronRange()
 {
-	thread_local unique_ptr<TGraph> eR(new TGraph("electrons.txt", "%lg %*lg %lg"));
+	static unique_ptr<TGraph> eR(new TGraph("electrons.txt", "%lg %*lg %lg"));
 	return eR.get();
 }
 
 TGraph* Absorber::electronStoppingPower()
 {
-	thread_local unique_ptr<TGraph> eSP(new TGraph("electrons.txt", "%lg %lg %*lg"));
+	static unique_ptr<TGraph> eSP(new TGraph("electrons.txt", "%lg %lg %*lg"));
 	return eSP.get();
 }
 
 TGraph* Absorber::muonRange()
 {
-	thread_local unique_ptr<TGraph> mR(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
+	static unique_ptr<TGraph> mR(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
 	return mR.get();
 }
 TGraph* Absorber::muonStoppingPower()
 {
-	thread_local unique_ptr<TGraph> mSP(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
+	static unique_ptr<TGraph> mSP(new TGraph("muons.txt", "%lg %*lg %*lg %*lg %*lg %*lg %*lg %lg"));
 	return mSP.get();
 }
 

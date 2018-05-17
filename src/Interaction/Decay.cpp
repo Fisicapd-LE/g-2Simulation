@@ -69,12 +69,14 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos, const BGen& 
 	else*/
 	{
 		B b = bg(pos);
+		double bNorm = norm(b);
+		
 		
 		//clog << b.x << endl;
 	
 		//clog << pos.x << " " <<pos.y << " " << pos.z << endl;
 	
-		double rotationAngle = fmod(-norm(b)*gyr*t*1e-9, 2*M_PI);
+		double rotationAngle = fmod(-bNorm*gyr*t*1e-9, 2*M_PI);
 		rotationAngle *= (cosmic.f == Track::Flavour::muP)?1:-1; 
 		//clog << norm(b)*gyr*1e-9 << endl;
 		//-sqrt(b.x*b.x + b.y*b.y)*t*1e7*g*muB/2;
@@ -95,9 +97,12 @@ unique_ptr<Track> Decay::decay(const Track& cosmic, Position3D pos, const BGen& 
 		}
 		
 		//cout << spinDir.theta << " ";
-	
-		spinDir = rotate(spinDir, versor(b), rotationAngle);
-	
+		
+		if (bNorm != 0)
+		{
+			spinDir = rotate(spinDir, versor(b), rotationAngle);
+		}
+		
 		std::tie(dir, E) = generateElecDirEnergy();		// generate electron dir as if spin was on vertical
 	
 		//cout << dir.theta << " ";
