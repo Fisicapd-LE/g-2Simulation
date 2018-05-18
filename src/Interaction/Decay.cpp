@@ -157,7 +157,7 @@ pair<Direction, double> Decay::generateElecDirEnergy()
 	{
 		cosNum = 1 - 2*generate_canonical<double, 16>(gen());
 		xNum = generate_canonical<double, 16>(gen());
-		uniNum = generate_canonical<double, 16>(gen());
+		uniNum = generate_canonical<double, 16>(gen())*2;
 	}while( uniNum > (xNum*xNum*(3 - 2*xNum + cosNum*(1 - 2*xNum))) );	// genera theta e E, con algoritmo hit or miss
 	
 	dir.theta = acos(cosNum);
