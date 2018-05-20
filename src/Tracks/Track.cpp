@@ -28,10 +28,11 @@ std::unique_ptr<Track> Track::generate()
 	Flavour f = generateFlavour();
 	Spin s = generateSpin(f);
 	double energy = generateMuonEnergy();
-	while(energy < 0)
+	//while(energy < 0)
 	{
 		energy = generateMuonEnergy();
 	}
+	//cout << energy << endl;
 	return unique_ptr<Track>(new Track(p, d, s, f, energy, -numeric_limits<double>::max()));
 }
 
@@ -89,10 +90,10 @@ Track::Flavour Track::generateFlavour()
 
 double Track::generateMuonEnergy()
 {
-	const double attenuation = 0.36;
+	const double attenuation = 0.54;
 	
 	const double normg = 1.7/2.7;			// normalization of the g(x)
-	const double normf = 1./0.1079243265;	// normalization of the f(x)
+	const double normf = 1./0.09597895657;	// normalization of the f(x)
 	
 	const double maxh = normf/normg;
 	
@@ -127,14 +128,15 @@ double Track::generateMuonEnergy()
 		}
 		//cout << E << endl;
 		
-		double f = normf/(50 + pow(E, 2.7));
+		double f = (1 - 7.89896e-03/(pow(x, 1.15)+7.89896e-03))*
+			normf/(50 + pow(E + attenuation, 2.7));
 		
 		h = f/g;
 		
 		y = generate_canonical<double, 16>(gen())*maxh;
 	}while(y > h);
 	
-	E -= attenuation; 
+	//E -= attenuation; 
 	
 	//cout << E << endl;
 	

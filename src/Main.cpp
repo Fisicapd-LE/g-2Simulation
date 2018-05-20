@@ -26,6 +26,7 @@
 #include <algorithm>
 
 #include <TH1.h>
+#include <TStyle.h>
 
 #include <ROOT/TThreadExecutor.hxx>
 
@@ -35,6 +36,7 @@ int main(int argc, char** argv)
 {
 	ROOT::EnableThreadSafety();
 	TH1::AddDirectory(false);
+	gStyle->SetOptStat(1111111);
 
 	unique_ptr<AnalysisInfo> info(new AnalysisInfo(argc, argv));  //argomenti da riga di comando
 	
@@ -88,7 +90,7 @@ int main(int argc, char** argv)
 
 	clog << "Starting loop\n";
 	
-	atomic<int> counter(0);
+	atomic<long> counter(0);
 	
 	// ah, the things you have to do because of a 4 byte integer...
 	for(int i = 0; i < nEvent/1000000000; i++)

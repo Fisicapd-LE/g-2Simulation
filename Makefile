@@ -34,7 +34,7 @@ clean:
 
 .SECONDEXPANSION:
 
-$(OBJECTS): src/%.o: src/%.cpp $(DEPDIR)/%.d
+$(OBJECTS): src/%.o: src/%.cpp $(DEPDIR)/%.d Makefile
 	g++ -c $(CFLAGS) $(DEPFLAGS) -I $(INCLUDE) -o $@ $<
 	$(POSTCOMPILE)
 	
